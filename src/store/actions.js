@@ -1,0 +1,5 @@
+export const SET_USER = "SETUSER";
+export const SET_INITIAL_STATE = "SETINITIALSTATE";
+export const SET_NAVBAR_TOGGLE = "SETNAVBARTOGGLE";
+export const SET_HISTORY = "SETHISTORY";
+export const SET_ALERT = "SETALERT";

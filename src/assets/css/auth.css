@@ -1,0 +1,45 @@
+.page-header {
+  min-height: 100vh;
+  height: auto;
+  display: inherit;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  align-items: center;
+}
+.page-header::before {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.page-header::before,
+.page-header::after {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: block;
+  left: 0;
+  top: 0;
+  content: "";
+}
+
+.login-form {
+  margin: 30%;
+}
+.login-form-forgot {
+  float: right;
+}
+.login-form-button {
+  width: 100%;
+}
+.auth-main {
+  height: 100vh !important;
+}
+.auth-image {
+  background-image: url(https://hopecrucitas.com/wp-content/uploads/2019/09/otherk-2-1.jpg);
+  background-repeat: no-repeat;
+  background-color: darkgray;
+  background-size: cover;
+  background-position: center;
+}
