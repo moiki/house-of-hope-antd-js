@@ -67,7 +67,7 @@ export default function Admin(props) {
               v.allowedRoles.some((route) => state.user.role.includes(route))
             ) {
               return v.children ? (
-                <SubMenu key={i} title={v.title}>
+                <SubMenu icon={v.icon} key={i} title={v.title}>
                   {v.children.map((f, g) => {
                     if (
                       v.layout === "admin" &&
@@ -80,7 +80,7 @@ export default function Admin(props) {
                   })}
                 </SubMenu>
               ) : (
-                <Menu.Item key={i} icon={<UserOutlined />}>
+                <Menu.Item key={i} icon={v.icon}>
                   {v.title}
                 </Menu.Item>
               );

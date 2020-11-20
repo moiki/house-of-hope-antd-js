@@ -1,8 +1,13 @@
+import React from "react";
+import { AiOutlineHome, AiOutlineMedicineBox } from "react-icons/ai";
+import { FiMap } from "react-icons/fi";
+import { RiHospitalLine } from "react-icons/ri";
+
 const routes = [
   {
     title: "Home",
     path: "home",
-    icon: "home",
+    icon: <AiOutlineHome />,
     layout: "admin",
     allowedRoles: [
       "Root",
@@ -15,8 +20,8 @@ const routes = [
   },
   {
     title: "Work Routes",
-    path: "",
-    icon: "map",
+    path: "work-routes",
+    icon: <FiMap />,
     layout: "admin",
     children: [
       {
@@ -65,7 +70,7 @@ const routes = [
   {
     title: "Pacients",
     path: "",
-    icon: "local_hospital",
+    icon: <AiOutlineMedicineBox />,
     layout: "admin",
     children: [
       {
@@ -101,7 +106,7 @@ const routes = [
   {
     title: "Clinics",
     path: "",
-    icon: "location_city",
+    icon: <RiHospitalLine />,
     layout: "admin",
     children: [
       {
