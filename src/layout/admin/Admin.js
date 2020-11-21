@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Layout, Menu } from "antd";
+import { Avatar, Image, Layout, Menu, PageHeader } from "antd";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -15,6 +15,7 @@ import dotenv from "dotenv";
 import { MainStore } from "App";
 import routes from "routes";
 import SubMenu from "antd/lib/menu/SubMenu";
+import logo from "assets/img/LOGO2.png";
 
 const { Header, Sider, Content } = Layout;
 
@@ -59,7 +60,24 @@ export default function Admin(props) {
         collapsible
         collapsed={collapsed}
       >
-        <div className="logo">House Of Hope</div>
+        <div className="logo">
+          {collapsed ? (
+            <Avatar
+              style={{ marginLeft: 7 }}
+              className="anticon"
+              src={<Image src={logo} />}
+            />
+          ) : (
+            <span>
+              <Avatar
+                className="anticon"
+                style={{ marginRight: 5 }}
+                src={<Image src={logo} />}
+              />{" "}
+              House Of Hope
+            </span>
+          )}
+        </div>
         <Menu theme="light" mode="inline" defaultSelectedKeys={["1"]}>
           {routes.map((v, i) => {
             if (
@@ -90,23 +108,19 @@ export default function Admin(props) {
         </Menu>
       </Sider>
       <Layout className="site-layout">
-        <Header
-          className="site-layout-background header-hoh"
-          style={{ padding: 0 }}
-        >
-          {React.createElement(
+        <PageHeader
+          title={React.createElement(
             collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
             {
               className: "trigger",
               onClick: toggle,
             }
           )}
-          <Menu theme="light" mode="horizontal" defaultSelectedKeys={["2"]}>
-            <Menu.Item key="1">nav 1</Menu.Item>
-            <Menu.Item key="2">nav 2</Menu.Item>
-            <Menu.Item key="3">nav 3</Menu.Item>
-          </Menu>
-        </Header>
+          subTitle={`Welcome ${state.user.fullname}!`}
+          ghost={true}
+          className="header-hoh"
+          style={{ padding: 0 }}
+        ></PageHeader>
         <Content
           className="site-layout-background content"
           style={{

@@ -78,3 +78,8 @@ code {
 .ant-form-item-explain-error {
   font-size: smaller;
 }
+
+.site-statistic-demo-card {
+  background: #ececec;
+  padding: 30px;
+}

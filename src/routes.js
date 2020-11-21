@@ -1,3 +1,4 @@
+import { SettingOutlined } from "@ant-design/icons";
 import React from "react";
 import { AiOutlineHome, AiOutlineMedicineBox } from "react-icons/ai";
 import { FiMap } from "react-icons/fi";
@@ -7,7 +8,7 @@ const routes = [
   {
     title: "Home",
     path: "home",
-    icon: <AiOutlineHome />,
+    icon: <AiOutlineHome className="anticon" />,
     layout: "admin",
     allowedRoles: [
       "Root",
@@ -21,7 +22,7 @@ const routes = [
   {
     title: "Work Routes",
     path: "work-routes",
-    icon: <FiMap />,
+    icon: <FiMap className="anticon" />,
     layout: "admin",
     children: [
       {
@@ -70,7 +71,7 @@ const routes = [
   {
     title: "Pacients",
     path: "",
-    icon: <AiOutlineMedicineBox />,
+    icon: <AiOutlineMedicineBox className="anticon" />,
     layout: "admin",
     children: [
       {
@@ -106,7 +107,7 @@ const routes = [
   {
     title: "Clinics",
     path: "",
-    icon: <RiHospitalLine />,
+    icon: <RiHospitalLine className="anticon" />,
     layout: "admin",
     children: [
       {
@@ -159,7 +160,7 @@ const routes = [
   {
     title: "Management",
     path: "management",
-    icon: "settings_applications",
+    icon: <SettingOutlined />,
     layout: "admin",
     children: null,
     show: true,

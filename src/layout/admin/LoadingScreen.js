@@ -66,14 +66,7 @@ const LoadingScreen = (props) => {
   };
 
   return (
-    <Row
-      container
-      spacing={0}
-      direction="column"
-      alignItems="center"
-      justify="center"
-      style={{ minHeight: "100vh" }}
-    >
+    <Row className="center" justify="center" style={{ minHeight: "100vh" }}>
       <Col span={24}>
         <div
           style={{
