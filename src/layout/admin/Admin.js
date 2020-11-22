@@ -16,6 +16,7 @@ import { MainStore } from "App";
 import routes from "routes";
 import SubMenu from "antd/lib/menu/SubMenu";
 import logo from "assets/img/LOGO2.png";
+import AuthDropdown from "components/authDropdown";
 
 const { Header, Sider, Content } = Layout;
 
@@ -93,7 +94,11 @@ export default function Admin(props) {
                         state.user.role.includes(route)
                       )
                     ) {
-                      return <Menu.Item key={`_${g}`}>{f.title}</Menu.Item>;
+                      return (
+                        <Menu.Item key={`_${g}_${v.title}`}>
+                          {f.title}
+                        </Menu.Item>
+                      );
                     }
                   })}
                 </SubMenu>
@@ -120,7 +125,9 @@ export default function Admin(props) {
           ghost={true}
           className="header-hoh"
           style={{ padding: 0 }}
-        ></PageHeader>
+        >
+          <AuthDropdown email={state.user.email} name={state.user.fullname} />
+        </PageHeader>
         <Content
           className="site-layout-background content"
           style={{

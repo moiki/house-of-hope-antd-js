@@ -2,9 +2,7 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: "Montserrat", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -14,11 +12,11 @@ code {
     monospace;
 }
 .content {
-  min-height: 100% !important;
+  min-height: 100vh !important;
 }
 .sidebar {
   overflow: "auto";
-  height: 100vh;
+  min-height: 100%;
   position: sticky;
   left: 0;
 }
@@ -81,5 +79,100 @@ code {
 
 .site-statistic-demo-card {
   background: #ececec;
-  padding: 30px;
+  padding-inline: 30px;
+  padding-bottom: 1rem;
+  padding-top: 1rem;
+}
+
+/* Let's get this party started */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+  background-color: transparent !important;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background: rgba(161, 152, 152, 0.486);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(194, 175, 175, 0);
+}
+
+.home-main-container {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  gap: 1rem;
+}
+
+.pic-banner-container {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url(assets/img/alcance.jpg);
+  display: flex;
+  height: 60vh;
+  margin-inline: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.pic-banner {
+  padding: 2rem;
+  width: 100% !important;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.603), rgba(0, 0, 0, 0.603));
+}
+.pic-banner h1 {
+  color: #fff;
+  width: 100%;
+  z-index: 10;
+  letter-spacing: 4px;
+  font-weight: bolder;
+  opacity: 1 !important;
+  text-align: center !important;
+  font-size: 2rem;
+}
+.timeline-last-activities > .ant-card-body {
+  padding-bottom: 0px !important;
+}
+
+@media (min-width: 1400px) and (max-width: 1950px) {
+  .pic-banner-container {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+      url(assets/img/alcance.jpg);
+    display: flex;
+    margin-inline: 10px;
+    align-items: center;
+    justify-content: center;
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+}
+
+@media (min-width: 900px) and (max-width: 1400px) {
+  .pic-banner-container {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+      url(assets/img/alcance.jpg);
+    display: flex;
+    margin-inline: 10px;
+    align-items: center;
+    justify-content: center;
+    grid-column: 1 / span 2;
+    grid-row: 1 / span 1;
+  }
+}
+
+@media (min-width: 200px) and (max-width: 900px) {
+  .home-main-container {
+    display: grid;
+    grid-template-columns: 100%;
+    gap: 1rem;
+  }
 }
