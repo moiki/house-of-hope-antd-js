@@ -1,4 +1,5 @@
 import Home from "views/home";
+import ManagementView from "views/management";
 import Error404 from "./components/blocked/Error404";
 
 const MainPagesList = [
@@ -146,10 +147,10 @@ const MainPagesList = [
   },
   {
     title: "Management",
-    path: "management/noseque",
+    path: "management",
     icon: "settings_applications",
     layout: "admin",
-    component: Error404,
+    component: ManagementView,
     children: null,
     show: true,
     allowedRoles: ["Root"],

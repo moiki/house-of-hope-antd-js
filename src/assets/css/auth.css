@@ -25,7 +25,10 @@
 }
 
 .login-form {
+  background-color: aliceblue;
+  padding: 18px;
   margin: 30%;
+  border-radius: 2%;
 }
 .login-form-forgot {
   float: right;

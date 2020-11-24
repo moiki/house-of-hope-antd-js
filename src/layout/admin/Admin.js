@@ -9,7 +9,7 @@ import {
 } from "@ant-design/icons";
 import { Footer } from "antd/lib/layout/layout";
 import MainPagesList from "../../PagesList";
-import { Route, Switch } from "react-router-dom";
+import { NavLink, Route, Switch } from "react-router-dom";
 import LoadingScreen from "./LoadingScreen";
 import dotenv from "dotenv";
 import { MainStore } from "App";
@@ -96,7 +96,7 @@ export default function Admin(props) {
                     ) {
                       return (
                         <Menu.Item key={`_${g}_${v.title}`}>
-                          {f.title}
+                          <NavLink to={`/admin/${f.path}`}>{f.title}</NavLink>
                         </Menu.Item>
                       );
                     }
@@ -104,7 +104,7 @@ export default function Admin(props) {
                 </SubMenu>
               ) : (
                 <Menu.Item key={i} icon={v.icon}>
-                  {v.title}
+                  <NavLink to={`/admin/${v.path}`}>{v.title}</NavLink>
                 </Menu.Item>
               );
             }
@@ -121,7 +121,11 @@ export default function Admin(props) {
               onClick: toggle,
             }
           )}
-          subTitle={`Welcome ${state.user.fullname}!`}
+          subTitle={
+            <b
+              style={{ color: "white" }}
+            >{`Welcome ${state.user.fullname}!`}</b>
+          }
           ghost={true}
           className="header-hoh"
           style={{ padding: 0 }}
@@ -138,8 +142,10 @@ export default function Admin(props) {
         >
           <Switch>{LoadContent()}</Switch>
         </Content>
-        <Footer style={{ textAlign: "center" }}>
-          Bradley's House Of Hope ©2020 Created by Ant UED
+        <Footer
+          style={{ textAlign: "center", color: "white", background: "#005a69" }}
+        >
+          Bradley's House Of Hope ©2020 Created by MR
         </Footer>
       </Layout>
     </Layout>

@@ -1,6 +1,15 @@
 import React from "react";
 import banner from "assets/img/alcance.jpg";
-import { Card, Col, Image, Row, Statistic, Timeline } from "antd";
+import {
+  Card,
+  Col,
+  Divider,
+  Image,
+  Row,
+  Statistic,
+  Timeline,
+  Typography,
+} from "antd";
 import {
   ArrowDownOutlined,
   ArrowUpOutlined,
@@ -8,6 +17,7 @@ import {
   StarFilled,
   TeamOutlined,
 } from "@ant-design/icons";
+import PatientCard from "components/PacientCard";
 
 export default function Home(props) {
   return (
@@ -94,6 +104,24 @@ export default function Home(props) {
             </Timeline.Item>
           </Timeline>
         </Card>
+      </div>
+      <Divider
+        style={{
+          textAlign: "center",
+          marginTop: "1.6rem",
+          fontWeight: "lighter",
+          color: "#545454",
+          fontSize: 40,
+        }}
+        plain
+      >
+        {" "}
+        Top 5 Pacients Cases
+      </Divider>
+      <div className="top-patients">
+        {[1, 1, 1, 1, 1].map((v, i) => {
+          return <PatientCard key={i} />;
+        })}
       </div>
     </React.Fragment>
   );

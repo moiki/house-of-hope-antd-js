@@ -63,7 +63,7 @@ export default function Login(props) {
   return (
     <Row className="auth-main">
       <Col className="auth-image" span={12}></Col>
-      <Col span={12}>
+      <Col span={12} style={{ background: "#005a69" }}>
         <form
           onSubmit={handleSubmit}
           className="ant-form ant-form-horizontal login-form"

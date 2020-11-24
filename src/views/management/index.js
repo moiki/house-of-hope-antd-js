@@ -1,0 +1,74 @@
+import React, { useState, useEffect, createContext, useContext } from "react";
+import { useLazyQuery } from "@apollo/react-hooks";
+import { roleListGQL } from "graphql/queries/userQueries";
+import Alert from "components/MyAlert/Alert";
+import { Tabs } from "antd";
+import { BarsOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
+import { MainStore } from "App";
+import Users from "./tabs/Users/Users";
+const { TabPane } = Tabs;
+export const AccountStore = createContext();
+
+export default function ManagementView() {
+  const { state } = useContext(MainStore);
+  const [roleState, setRoleState] = useState([]);
+  const [fetchRoles, { loading }] = useLazyQuery(roleListGQL, {
+    onCompleted: (e) => {
+      setRoleState(e.roleList);
+    },
+    onError: (e) => {
+      Alert.fire(
+        "Error",
+        <p>
+          <ul>
+            {e.graphQLErrors.length > 0 ? (
+              e.graphQLErrors.map((v, i) => <li key={i}>{v.message}</li>)
+            ) : (
+              <p>{e.message}</p>
+            )}
+          </ul>
+        </p>,
+        "error"
+      );
+    },
+  });
+  return (
+    <div>
+      <Tabs defaultActiveKey="1" centered>
+        <TabPane
+          tab={
+            <span>
+              <UserOutlined />
+              Users
+            </span>
+          }
+          key="1"
+        >
+          <Users />
+        </TabPane>
+        <TabPane
+          tab={
+            <span>
+              <BarsOutlined />
+              Roles
+            </span>
+          }
+          key="2"
+        >
+          Content of Tab Pane 2
+        </TabPane>
+        <TabPane
+          tab={
+            <span>
+              <MailOutlined />
+              Invitations
+            </span>
+          }
+          key="3"
+        >
+          Content of Tab Pane 3
+        </TabPane>
+      </Tabs>
+    </div>
+  );
+}
