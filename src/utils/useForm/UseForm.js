@@ -135,12 +135,12 @@ const useForm = (submitForm, defaultValues, schema) => {
     setValues((values) => ({ ...values, [inputName]: newValue }));
   };
 
-  const handleChange = (event) => {
-    if (event.persist()) event.persist();
+  const handleChange = (event, name) => {
+    if (event.persist) event.persist();
     const { errors, classNames } = validationForm(
       {
         ...values,
-        [event.target.name]: event.target.value,
+        [name ? name : event.target.name]: name ? event : event.target.value,
       },
       schemaValidation,
       onBlurState
@@ -149,7 +149,7 @@ const useForm = (submitForm, defaultValues, schema) => {
     setClassNames(classNames);
     setValues((values) => ({
       ...values,
-      [event.target.name]: event.target.value,
+      [name ? name : event.target.name]: name ? event : event.target.value,
     }));
   };
 

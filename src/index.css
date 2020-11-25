@@ -6,9 +6,16 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-.antd-layout {
+.ant-layout .site-layout {
   background-color: #084954 !important;
   color: #fff;
+}
+.ant-btn-primary {
+  background-color: #126270 !important;
+  color: #fff;
+}
+.cl-primary {
+  color: #126270 !important;
 }
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",

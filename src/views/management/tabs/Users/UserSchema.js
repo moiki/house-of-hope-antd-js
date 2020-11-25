@@ -32,6 +32,11 @@ export const RegisterSchema = {
     "any.required": "Phone Number Is Required",
     "string.empty": "Phone Number Is Required",
   }),
+  address: Joi.string().required().messages({
+    "string.base": "Address Is Required",
+    "any.required": "Address Is Required",
+    "string.empty": "Address Is Required",
+  }),
   password: Joi.string()
     .required()
     .label("password")

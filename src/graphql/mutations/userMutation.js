@@ -8,7 +8,7 @@ export const createUserGQL = gql`
     $phone_number: String!
     $password: String!
     $profession: String!
-    $address: String
+    $address: String!
     $roles: [String!]!
   ) {
     createUser(

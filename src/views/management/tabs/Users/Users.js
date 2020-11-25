@@ -1,17 +1,26 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Table, Tag, Space } from "antd";
+import { Table, Tag, Space, Button } from "antd";
 import moment from "moment";
 import { useLazyQuery } from "@apollo/react-hooks";
 import { userListGQL } from "graphql/queries/userQueries";
 import { useScreenObserverHook } from "utils/ScreenObserverHook";
 import Alert from "components/MyAlert/Alert";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  UserAddOutlined,
+} from "@ant-design/icons";
+import UserCU from "./UserCU";
 
 export default function Users(props) {
   const [openModalRole, setOpenModalRole] = useState(false);
   const [idUser, setIdUser] = useState(null);
+  const [openModalUser, setOpenModalUser] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const { setRef, visible } = useScreenObserverHook();
   const [localData, setLocalData] = useState([]);
+
+  const handleModalUser = () => setOpenModalUser(!openModalUser);
 
   const columns = [
     {
@@ -63,8 +72,12 @@ export default function Users(props) {
       key: "action",
       render: () => (
         <Space size="middle">
-          <a>Edit</a>
-          <a>Delete</a>
+          <Button type="ghost" icon={<EditOutlined />}>
+            Edit
+          </Button>
+          <Button icon={<DeleteOutlined />} danger>
+            Delete
+          </Button>
         </Space>
       ),
     },
@@ -101,7 +114,27 @@ export default function Users(props) {
   }, [visible]);
   return (
     <div ref={setRef}>
-      <Table columns={columns} loading={loadingUser} dataSource={localData} />
+      {openModalUser && (
+        <UserCU
+          refetchUser={refetchUser}
+          handleCloseModal={handleModalUser}
+          openModal={openModalUser}
+        />
+      )}
+      <Button
+        type="primary"
+        shape="round"
+        icon={<UserAddOutlined />}
+        onClick={handleModalUser}
+      >
+        Create New User
+      </Button>
+      <Table
+        pagination={{ position: ["bottomCenter"], pageSize: 6 }}
+        columns={columns}
+        loading={loadingUser}
+        dataSource={localData}
+      />
     </div>
   );
 }

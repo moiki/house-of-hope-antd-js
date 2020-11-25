@@ -6,6 +6,7 @@ import { Tabs } from "antd";
 import { BarsOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import { MainStore } from "App";
 import Users from "./tabs/Users/Users";
+import Roles from "./tabs/Roles";
 const { TabPane } = Tabs;
 export const AccountStore = createContext();
 
@@ -32,8 +33,16 @@ export default function ManagementView() {
       );
     },
   });
+  useEffect(() => {
+    fetchRoles();
+  }, []);
   return (
-    <div>
+    <AccountStore.Provider
+      value={{
+        roleList: roleState,
+        loadUsers: null,
+      }}
+    >
       <Tabs defaultActiveKey="1" centered>
         <TabPane
           tab={
@@ -55,7 +64,11 @@ export default function ManagementView() {
           }
           key="2"
         >
-          Content of Tab Pane 2
+          <div
+            style={{ padding: 10, paddingLeft: "5rem", paddingRight: "5rem" }}
+          >
+            <Roles data={roleState} />
+          </div>
         </TabPane>
         <TabPane
           tab={
@@ -69,6 +82,6 @@ export default function ManagementView() {
           Content of Tab Pane 3
         </TabPane>
       </Tabs>
-    </div>
+    </AccountStore.Provider>
   );
 }

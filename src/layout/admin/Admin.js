@@ -55,12 +55,7 @@ export default function Admin(props) {
     />
   ) : (
     <Layout>
-      <Sider
-        theme="light"
-        className="sidebar"
-        collapsible
-        collapsed={collapsed}
-      >
+      <Sider theme="light" className="sidebar" collapsed={collapsed}>
         <div className="logo">
           {collapsed ? (
             <Avatar
@@ -143,7 +138,7 @@ export default function Admin(props) {
           <Switch>{LoadContent()}</Switch>
         </Content>
         <Footer
-          style={{ textAlign: "center", color: "white", background: "#005a69" }}
+          style={{ textAlign: "center", color: "white", background: "#084954" }}
         >
           Bradley's House Of Hope ©2020 Created by MR
         </Footer>
