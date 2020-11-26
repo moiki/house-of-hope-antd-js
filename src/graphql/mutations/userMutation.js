@@ -34,10 +34,9 @@ export const editUserGQL = gql`
     $last_name: String!
     $email: String!
     $phone_number: String!
-    $password: String!
     $profession: String!
     $address: String
-    $roles: [String!]
+    $roles: [String!]!
   ) {
     editUser(
       id: $id
@@ -45,7 +44,6 @@ export const editUserGQL = gql`
       last_name: $last_name
       email: $email
       phone_number: $phone_number
-      password: $password
       profession: $profession
       address: $address
       roles: $roles

@@ -18,7 +18,7 @@ export default function ManagementView() {
       setRoleState(e.roleList);
     },
     onError: (e) => {
-      Alert.fire(
+      Alert(
         "Error",
         <p>
           <ul>
@@ -46,10 +46,10 @@ export default function ManagementView() {
       <Tabs defaultActiveKey="1" centered>
         <TabPane
           tab={
-            <span>
+            <h1>
               <UserOutlined />
               Users
-            </span>
+            </h1>
           }
           key="1"
         >
@@ -57,10 +57,10 @@ export default function ManagementView() {
         </TabPane>
         <TabPane
           tab={
-            <span>
+            <h1>
               <BarsOutlined />
               Roles
-            </span>
+            </h1>
           }
           key="2"
         >
@@ -72,10 +72,10 @@ export default function ManagementView() {
         </TabPane>
         <TabPane
           tab={
-            <span>
+            <h1>
               <MailOutlined />
               Invitations
-            </span>
+            </h1>
           }
           key="3"
         >

@@ -16,6 +16,23 @@ export const userListGQL = gql`
   }
 `;
 
+export const getUserGQL = gql`
+  query getUser($id: String!) {
+    getUser(id: $id) {
+      id
+      first_name
+      last_name
+      email
+      phone
+      profession
+      address
+      roles {
+        role_name
+      }
+    }
+  }
+`;
+
 export const roleListGQL = gql`
   query roleList {
     roleList: roles {

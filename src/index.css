@@ -10,12 +10,28 @@ body {
   background-color: #084954 !important;
   color: #fff;
 }
+.ant-layout-sider-children {
+  min-width: 200px;
+  position: fixed;
+}
+.h-tooltip {
+  font-size: smaller;
+  display: block;
+  background-color: #fff !important;
+  color: #084954 !important;
+}
 .ant-btn-primary {
   background-color: #126270 !important;
   color: #fff;
 }
+.cl-primary > div,
 .cl-primary {
   color: #126270 !important;
+}
+
+.custom-spinner {
+  width: 100% !important;
+  margin-top: 30%;
 }
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",

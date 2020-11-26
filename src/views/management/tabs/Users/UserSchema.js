@@ -95,8 +95,12 @@ export const EditUserSchema = {
     "any.required": "Phone Number Is Required",
     "string.empty": "Phone Number Is Required",
   }),
-
-  eole: Joi.string().optional().label("role").messages({
+  address: Joi.string().required().messages({
+    "string.base": "Address Is Required",
+    "any.required": "Address Is Required",
+    "string.empty": "Address Is Required",
+  }),
+  role: Joi.string().optional().label("role").messages({
     "string.base": "Role is required",
     "any.required": "Role is required",
     "string.empty": "Role is required",
@@ -105,6 +109,4 @@ export const EditUserSchema = {
     .meta({ swaggerType: "file" })
     .optional()
     .description("image file"),
-  Password: Joi.optional(),
-  password_confirmation: Joi.optional(),
 };

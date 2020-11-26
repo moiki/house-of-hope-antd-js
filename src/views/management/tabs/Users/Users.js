@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Table, Tag, Space, Button } from "antd";
+import { Table, Tag, Space, Button, Popconfirm } from "antd";
 import moment from "moment";
-import { useLazyQuery } from "@apollo/react-hooks";
+import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import { userListGQL } from "graphql/queries/userQueries";
+import { deleteUserGQL } from "graphql/mutations/userMutation";
 import { useScreenObserverHook } from "utils/ScreenObserverHook";
 import Alert from "components/MyAlert/Alert";
 import {
@@ -11,6 +12,7 @@ import {
   UserAddOutlined,
 } from "@ant-design/icons";
 import UserCU from "./UserCU";
+import randomIdForRow from "utils/TableKeygen";
 
 export default function Users(props) {
   const [openModalRole, setOpenModalRole] = useState(false);
@@ -21,7 +23,6 @@ export default function Users(props) {
   const [localData, setLocalData] = useState([]);
 
   const handleModalUser = () => setOpenModalUser(!openModalUser);
-
   const columns = [
     {
       title: "User Name",
@@ -34,7 +35,7 @@ export default function Users(props) {
       key: "email",
     },
     {
-      title: "Date Of Sign In",
+      title: "Registration Date",
       dataIndex: "created_date",
       key: "created_date",
       render: (text) => (
@@ -69,15 +70,28 @@ export default function Users(props) {
     },
     {
       title: "Action",
-      key: "action",
-      render: () => (
+      dataIndex: "id",
+      key: "id",
+      render: (text) => (
         <Space size="middle">
-          <Button type="ghost" icon={<EditOutlined />}>
+          <Button
+            type="ghost"
+            onClick={() => handleUpdate(text)}
+            icon={<EditOutlined />}
+          >
             Edit
           </Button>
-          <Button icon={<DeleteOutlined />} danger>
-            Delete
-          </Button>
+          <Popconfirm
+            placement="top"
+            title={"Are you sure to delete this Account?"}
+            onConfirm={() => handleDelete(text)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button icon={<DeleteOutlined />} danger>
+              Delete
+            </Button>
+          </Popconfirm>
         </Space>
       ),
     },
@@ -88,7 +102,7 @@ export default function Users(props) {
       setLocalData(res);
     },
     onError: (e) => {
-      Alert.fire(
+      Alert(
         "Error",
         <p>
           <ul>
@@ -103,8 +117,41 @@ export default function Users(props) {
       );
     },
   });
+
+  const [executeDelete, { loadingDelete }] = useMutation(deleteUserGQL, {
+    onCompleted: () => {
+      refetchUser();
+      Alert("Completed!", <span>Account Deleted!</span>, "success");
+    },
+    onError: (e) => {
+      console.log(e);
+      Alert("Error", <span>Error During Process!</span>, "error");
+    },
+  });
   const handleClickOpen = () => {
     setOpenModalRole(true);
+  };
+
+  const handleDelete = (e) => {
+    if (e) {
+      executeDelete({
+        variables: {
+          id: e,
+        },
+      });
+    }
+  };
+
+  const handleClickClose = () => {
+    handleModalUser();
+    if (idUser) {
+      setIdUser(null);
+    }
+  };
+
+  const handleUpdate = (e) => {
+    setIdUser(e);
+    setOpenModalUser(true);
   };
   useEffect(() => {
     if (visible && !loaded) {
@@ -116,8 +163,9 @@ export default function Users(props) {
     <div ref={setRef}>
       {openModalUser && (
         <UserCU
+          idUser={idUser}
           refetchUser={refetchUser}
-          handleCloseModal={handleModalUser}
+          handleCloseModal={handleClickClose}
           openModal={openModalUser}
         />
       )}
@@ -132,8 +180,9 @@ export default function Users(props) {
       <Table
         pagination={{ position: ["bottomCenter"], pageSize: 6 }}
         columns={columns}
-        loading={loadingUser}
+        loading={loadingUser || loadingDelete}
         dataSource={localData}
+        rowKey={() => randomIdForRow()}
       />
     </div>
   );

@@ -33,7 +33,7 @@ const validationForm = (values, schemaValidation, onBlurState) => {
 
 const useForm = (submitForm, defaultValues, schema) => {
   const [values, setValues] = useState(defaultValues);
-  const [schemaValidation] = useState(Joi.object(schema));
+  const [schemaValidation, setSchemaValidation] = useState(Joi.object(schema));
   const [onBlurState, setOnBlurState] = useState({});
   const [errors, setErrors] = useState({});
   const [classNames, setClassNames] = useState({});
@@ -46,10 +46,9 @@ const useForm = (submitForm, defaultValues, schema) => {
 
   const updateSchema = (body) => {
     if (body) {
-      setValues(Joi.object(body));
+      setSchemaValidation(Joi.object(body));
     }
   };
-
   useEffect(() => {
     const defaultClassNames = {};
     for (const property in defaultValues) {
