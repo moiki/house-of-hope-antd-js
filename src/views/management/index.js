@@ -7,6 +7,7 @@ import { BarsOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import { MainStore } from "App";
 import Users from "./tabs/Users/Users";
 import Roles from "./tabs/Roles";
+import InvitationList from "./tabs/invitation";
 const { TabPane } = Tabs;
 export const AccountStore = createContext();
 
@@ -79,7 +80,7 @@ export default function ManagementView() {
           }
           key="3"
         >
-          Content of Tab Pane 3
+          <InvitationList />
         </TabPane>
       </Tabs>
     </AccountStore.Provider>

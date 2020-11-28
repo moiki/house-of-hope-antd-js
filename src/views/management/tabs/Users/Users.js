@@ -38,9 +38,7 @@ export default function Users(props) {
       title: "Registration Date",
       dataIndex: "created_date",
       key: "created_date",
-      render: (text) => (
-        <span>{moment(props.value).format("MMM Do, YYYY")}</span>
-      ),
+      render: (text) => <span>{moment(text).format("MMM Do, YYYY")}</span>,
     },
     {
       title: "Profession",

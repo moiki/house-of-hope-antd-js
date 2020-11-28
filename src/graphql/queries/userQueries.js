@@ -42,3 +42,20 @@ export const roleListGQL = gql`
     }
   }
 `;
+
+export const invitationsGQL = gql`
+  query invitations {
+    invitations {
+      id
+      url_token
+      email
+      is_valid
+      created_date
+    }
+  }
+`;
+export const emailInvitationCheckGQL = gql`
+  query emailInvitationCheck($hash: String!) {
+    emailInvitationCheck(hash: $hash)
+  }
+`;

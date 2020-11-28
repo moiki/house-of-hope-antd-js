@@ -62,3 +62,21 @@ export const deleteUserGQL = gql`
     }
   }
 `;
+
+export const createInvitationGQL = gql`
+  mutation createInvitation($email: String, $idRole: String) {
+    createInvitation(email: $email, idRole: $idRole) {
+      status
+      message
+    }
+  }
+`;
+
+export const deleteInvitationGQL = gql`
+  mutation deleteInvitation($id: String!) {
+    deleteInvitation(id: $id) {
+      message
+      status
+    }
+  }
+`;
