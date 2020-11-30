@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Table, Tag, Space, Button, Popconfirm } from "antd";
+import { Table, Tag, Space, Popconfirm } from "antd";
+import Button from "antd-button-color";
 import moment from "moment";
 import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import { userListGQL } from "graphql/queries/userQueries";
@@ -13,6 +14,7 @@ import {
 } from "@ant-design/icons";
 import UserCU from "./UserCU";
 import randomIdForRow from "utils/TableKeygen";
+import Roles from "../Roles";
 
 export default function Users(props) {
   const [openModalRole, setOpenModalRole] = useState(false);
@@ -126,8 +128,8 @@ export default function Users(props) {
       Alert("Error", <span>Error During Process!</span>, "error");
     },
   });
-  const handleClickOpen = () => {
-    setOpenModalRole(true);
+  const handleClickOpenRole = () => {
+    setOpenModalRole(!openModalRole);
   };
 
   const handleDelete = (e) => {
@@ -167,14 +169,37 @@ export default function Users(props) {
           openModal={openModalUser}
         />
       )}
-      <Button
-        type="primary"
-        shape="round"
-        icon={<UserAddOutlined />}
-        onClick={handleModalUser}
+      {openModalRole && (
+        <Roles
+          handleCloseModal={handleClickOpenRole}
+          openModal={openModalRole}
+        />
+      )}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-start",
+          flexWrap: "wrap",
+        }}
       >
-        Create New User
-      </Button>
+        <Button
+          type="primary"
+          shape="round"
+          style={{ marginRight: "1rem" }}
+          icon={<UserAddOutlined />}
+          onClick={handleModalUser}
+        >
+          Create New User
+        </Button>
+        <Button
+          type="info"
+          shape="round"
+          icon={<UserAddOutlined />}
+          onClick={handleClickOpenRole}
+        >
+          Roles Information
+        </Button>
+      </div>
       <Table
         pagination={{ position: ["bottomCenter"], pageSize: 6 }}
         columns={columns}

@@ -1,4 +1,5 @@
 @import "~antd/dist/antd.css";
+@import "antd-button-color/dist/css/style.css";
 
 body {
   margin: 0;
@@ -22,6 +23,10 @@ body {
 }
 .ant-btn-primary {
   background-color: #126270 !important;
+  color: #fff;
+}
+.ant-btn-primary:hover {
+  background-color: #267e8d !important;
   color: #fff;
 }
 .cl-primary > div,

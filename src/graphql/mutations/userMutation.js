@@ -64,7 +64,7 @@ export const deleteUserGQL = gql`
 `;
 
 export const createInvitationGQL = gql`
-  mutation createInvitation($email: String, $idRole: String) {
+  mutation createInvitation($email: String!, $idRole: String!) {
     createInvitation(email: $email, idRole: $idRole) {
       status
       message

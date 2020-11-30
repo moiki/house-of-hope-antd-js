@@ -153,11 +153,6 @@ export default function UserCU(props) {
     }
   }, [idUser]);
 
-  useEffect(() => {
-    if (errors) {
-      console.log(errors);
-    }
-  }, [errors]);
   return (
     <Modal
       maskClosable={false}

@@ -59,26 +59,11 @@ export default function ManagementView() {
         <TabPane
           tab={
             <h1>
-              <BarsOutlined />
-              Roles
-            </h1>
-          }
-          key="2"
-        >
-          <div
-            style={{ padding: 10, paddingLeft: "5rem", paddingRight: "5rem" }}
-          >
-            <Roles data={roleState} />
-          </div>
-        </TabPane>
-        <TabPane
-          tab={
-            <h1>
               <MailOutlined />
               Invitations
             </h1>
           }
-          key="3"
+          key="2"
         >
           <InvitationList />
         </TabPane>

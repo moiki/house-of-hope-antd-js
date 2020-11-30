@@ -13,6 +13,8 @@ import {
   UserAddOutlined,
 } from "@ant-design/icons";
 import randomIdForRow from "utils/TableKeygen";
+import InvitationCU from "./InvitationCU";
+
 export default function InvitationList(props) {
   const [idInvitation, setIdInvitation] = useState(null);
   const [openModalInvitation, setOpenModalInvitation] = useState(false);
@@ -20,7 +22,8 @@ export default function InvitationList(props) {
   const { setRef, visible } = useScreenObserverHook();
   const [localData, setLocalData] = useState([]);
 
-  const handleModalUser = () => setOpenModalInvitation(!openModalInvitation);
+  const handleModalInvitation = () =>
+    setOpenModalInvitation(!openModalInvitation);
 
   const [refetchInvitation, { loading: loadingInvitation }] = useLazyQuery(
     invitationsGQL,
@@ -69,7 +72,7 @@ export default function InvitationList(props) {
   };
 
   const handleClickClose = () => {
-    handleModalUser();
+    handleModalInvitation();
     if (idInvitation) {
       setIdInvitation(null);
     }
@@ -139,7 +142,12 @@ export default function InvitationList(props) {
   }, [visible]);
   return (
     <div>
-      <Button type="primary" shape="round" icon={<MailOutlined />}>
+      <Button
+        type="primary"
+        shape="round"
+        onClick={handleModalInvitation}
+        icon={<MailOutlined />}
+      >
         Create New Invitation
       </Button>
       <Table
@@ -149,6 +157,12 @@ export default function InvitationList(props) {
         dataSource={localData}
         rowKey={() => randomIdForRow()}
       />
+      {openModalInvitation && (
+        <InvitationCU
+          openModal={openModalInvitation}
+          handleCloseModal={handleModalInvitation}
+        />
+      )}
     </div>
   );
 }
