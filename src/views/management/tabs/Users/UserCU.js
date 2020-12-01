@@ -23,6 +23,7 @@ import { AccountStore } from "views/management";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { getUserGQL } from "graphql/queries/userQueries";
 import { BeatLoader } from "react-spinners";
+import ModalForm from "components/modalForm";
 const { Option } = Select;
 
 const PasswordRules = () => {
@@ -154,10 +155,9 @@ export default function UserCU(props) {
   }, [idUser]);
 
   return (
-    <Modal
-      maskClosable={false}
-      visible={openModal}
-      confirmLoading={loading || LoadingEdit}
+    <ModalForm
+      openModal={openModal}
+      loading={loading || LoadingEdit}
       title={
         <span style={{ display: "flex", alignItems: "center" }}>
           <MdSupervisorAccount
@@ -168,11 +168,9 @@ export default function UserCU(props) {
           Create a new account
         </span>
       }
-      okText={idUser ? "Update" : "Create"}
-      cancelText="Cancel"
       style={{ top: 20 }}
-      onCancel={handleCloseModal}
-      onOk={handleSubmit}
+      handleClose={handleCloseModal}
+      handleSubmit={handleSubmit}
     >
       <Spin
         spinning={loadingFetch}
@@ -352,6 +350,6 @@ export default function UserCU(props) {
           )}
         </Form>
       </Spin>
-    </Modal>
+    </ModalForm>
   );
 }

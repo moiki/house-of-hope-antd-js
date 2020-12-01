@@ -42,7 +42,7 @@ export default function InvitationCU(props) {
         "any.required": "Email is a required",
         "string.empty": "Email is a required",
       }),
-    idRole: Joi.string().required().label("role").messages({
+    roleId: Joi.string().required().label("Role").messages({
       "string.base": "Role is required",
       "any.required": "Role is required",
       "string.empty": "Role is required",
@@ -56,7 +56,7 @@ export default function InvitationCU(props) {
       handleCloseModal();
     },
     onError: (e) => {
-      console.log(e.graphQLErrors);
+      console.log(e);
       Alert("Error", <span>Error During Process!</span>, "error");
     },
   });
@@ -77,7 +77,7 @@ export default function InvitationCU(props) {
     handleBlur,
     updateValues,
     updateSchema,
-  } = useForm(submitForm, { email: "", idRole: "" }, myschema);
+  } = useForm(submitForm, { email: "", roleId: "" }, myschema);
 
   return (
     <ModalForm
@@ -117,18 +117,18 @@ export default function InvitationCU(props) {
           </Col>
           <Col span={12}>
             <Form.Item
-              validateStatus={errors.idRole ? "error" : "validating"}
-              help={errors.idRole}
+              validateStatus={errors.roleId ? "error" : "validating"}
+              help={errors.roleId}
               label="Role"
             >
               <Select
-                id="role"
-                name="role"
+                id="roleId"
+                name="roleId"
                 autoComplete={"false"}
                 onBlur={handleBlur}
                 value={roleValue}
                 onChange={(value) => {
-                  handleChange(value, "idRole");
+                  handleChange(value, "roleId");
                   setRoleValue(value);
                 }}
               >

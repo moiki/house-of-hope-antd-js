@@ -4,6 +4,7 @@ import React from "react";
 export default function ModalForm({
   title,
   handleClose,
+  style,
   handleSubmit,
   loading,
   children,
@@ -14,6 +15,7 @@ export default function ModalForm({
     <Modal
       maskClosable={false}
       mask={false}
+      style={style}
       visible={openModal}
       confirmLoading={loading}
       title={title}

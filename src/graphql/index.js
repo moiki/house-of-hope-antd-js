@@ -32,7 +32,7 @@ const refreshToken = async () => {
   newToken = await newToken.json();
 
   if (newToken.errors) {
-    throw new Error("TokenExpiredError: jwt expired");
+    throw new Error("Session Expired!");
   }
   localStorage.setItem("token", newToken.data.refreshToken);
   return newToken.data.refreshToken;

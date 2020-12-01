@@ -11,6 +11,7 @@ export default function Roles(props) {
   return (
     <Modal
       maskClosable={false}
+      mask={false}
       visible={openModal}
       title={
         <span style={{ display: "flex", alignItems: "center" }}>

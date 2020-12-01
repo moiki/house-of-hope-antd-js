@@ -104,6 +104,7 @@ export default function InvitationList(props) {
       title: "Valid Token",
       dataIndex: "url_token",
       key: "url_token",
+      ellipsis: true,
     },
     {
       title: "Action",
@@ -141,7 +142,7 @@ export default function InvitationList(props) {
     }
   }, [visible]);
   return (
-    <div>
+    <div ref={setRef}>
       <Button
         type="primary"
         shape="round"
@@ -159,6 +160,7 @@ export default function InvitationList(props) {
       />
       {openModalInvitation && (
         <InvitationCU
+          refetchInvitation={refetchInvitation}
           openModal={openModalInvitation}
           handleCloseModal={handleModalInvitation}
         />
