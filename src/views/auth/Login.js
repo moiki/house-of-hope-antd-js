@@ -4,7 +4,7 @@ import useForm from "utils/useForm/UseForm";
 import { useMutation } from "@apollo/react-hooks";
 import { login as loginUtil } from "../../utils/LoginUtil";
 import validationSchema from "./LoginSchema";
-import { Form, Input, Button, Checkbox, Row, Col } from "antd";
+import { Form, Input, Button, Checkbox, Row, Col, Alert } from "antd";
 import { LockOutlined, UserAddOutlined } from "@ant-design/icons";
 import "../../assets/css/auth.css";
 import logo from "assets/img/LOGO2.png";
@@ -25,9 +25,9 @@ export default function Login(props) {
     },
     onError: (e) => {
       if (e.graphQLErrors.length < 1) {
-        setErrorState([e]);
+        setErrorState([e.message]);
       } else {
-        setErrorState(e.graphQLErrors);
+        setErrorState(e.graphQLErrors.map((e) => e.message));
       }
     },
   });
@@ -62,14 +62,32 @@ export default function Login(props) {
   );
   return (
     <Row className="auth-main">
-      <Col className="auth-image" span={12}></Col>
-      <Col span={12} style={{ background: "#084954" }}>
+      <Col className="auth-image" md={15} sm={0} xl={15} span={15}></Col>
+      <Col span={9} md={9} sm={24} xl={9}>
         <form
           onSubmit={handleSubmit}
           className="ant-form ant-form-horizontal login-form"
         >
           <div style={{ display: "flex", justifyContent: "center" }}>
             <img style={{ marginBottom: "1em" }} src={logo} />
+          </div>
+          <div
+            class="error-login"
+            style={errorState.length > 0 ? { marginBottom: "1rem" } : {}}
+          >
+            {errorState.length > 0 && (
+              <Alert
+                banner
+                type="error"
+                message={
+                  <div>
+                    {errorState.map((v, i) => {
+                      return <span key={i}>{v}</span>;
+                    })}
+                  </div>
+                }
+              />
+            )}
           </div>
           <Form.Item
             validateStatus={errors.email ? "error" : "validating"}
@@ -78,6 +96,7 @@ export default function Login(props) {
             <Input
               id="email"
               name="email"
+              size="large"
               autoComplete={"false"}
               onBlur={handleBlur}
               value={values.email}
@@ -93,6 +112,7 @@ export default function Login(props) {
             <Input.Password
               id="password"
               name="password"
+              size="large"
               autoComplete={"false"}
               value={values.password}
               onChange={handleChange}

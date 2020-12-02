@@ -49,7 +49,7 @@ export const invitationsGQL = gql`
       id
       url_token
       email
-      is_valid
+      answered
       created_date
     }
   }

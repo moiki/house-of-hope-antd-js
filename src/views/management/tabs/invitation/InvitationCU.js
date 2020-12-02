@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, useState } from "react";
 import { useLazyQuery, useMutation } from "@apollo/react-hooks";
-import Alert from "components/MyAlert/Alert";
+import AlertMessage from "components/MyAlert/Alert";
 import useForm from "utils/useForm/UseForm";
 import {
   Tooltip,
@@ -52,12 +52,16 @@ export default function InvitationCU(props) {
   const [executeCreate, { loading }] = useMutation(createInvitationGQL, {
     onCompleted: (e) => {
       refetchInvitation();
-      Alert("Completed!", <span>{e.createInvitation.message}</span>, "success");
+      AlertMessage(
+        "Completed!",
+        <span>{e.createInvitation.message}</span>,
+        "success"
+      );
       handleCloseModal();
     },
     onError: (e) => {
       console.log(e);
-      Alert("Error", <span>Error During Process!</span>, "error");
+      AlertMessage("Error", <span>Error During Process!</span>, "error");
     },
   });
 

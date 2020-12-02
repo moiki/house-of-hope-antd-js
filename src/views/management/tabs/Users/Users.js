@@ -6,7 +6,7 @@ import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import { userListGQL } from "graphql/queries/userQueries";
 import { deleteUserGQL } from "graphql/mutations/userMutation";
 import { useScreenObserverHook } from "utils/ScreenObserverHook";
-import Alert from "components/MyAlert/Alert";
+import AlertMessage from "components/MyAlert/Alert";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -102,7 +102,7 @@ export default function Users(props) {
       setLocalData(res);
     },
     onError: (e) => {
-      Alert(
+      AlertMessage(
         "Error",
         <p>
           <ul>
@@ -121,11 +121,11 @@ export default function Users(props) {
   const [executeDelete, { loadingDelete }] = useMutation(deleteUserGQL, {
     onCompleted: () => {
       refetchUser();
-      Alert("Completed!", <span>Account Deleted!</span>, "success");
+      AlertMessage("Completed!", <span>Account Deleted!</span>, "success");
     },
     onError: (e) => {
       console.log(e);
-      Alert("Error", <span>Error During Process!</span>, "error");
+      AlertMessage("Error", <span>Error During Process!</span>, "error");
     },
   });
   const handleClickOpenRole = () => {

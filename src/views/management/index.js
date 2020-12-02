@@ -1,12 +1,11 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
 import { useLazyQuery } from "@apollo/react-hooks";
 import { roleListGQL } from "graphql/queries/userQueries";
-import Alert from "components/MyAlert/Alert";
+import AlertMessage from "components/MyAlert/Alert";
 import { Tabs } from "antd";
-import { BarsOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
+import { MailOutlined, UserOutlined } from "@ant-design/icons";
 import { MainStore } from "App";
 import Users from "./tabs/Users/Users";
-import Roles from "./tabs/Roles";
 import InvitationList from "./tabs/invitation";
 const { TabPane } = Tabs;
 export const AccountStore = createContext();
@@ -19,7 +18,7 @@ export default function ManagementView() {
       setRoleState(e.roleList);
     },
     onError: (e) => {
-      Alert(
+      AlertMessage(
         "Error",
         <p>
           <ul>

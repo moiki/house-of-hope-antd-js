@@ -2,7 +2,7 @@ import React, { useEffect, useContext } from "react";
 import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import { createUserGQL } from "graphql/mutations/userMutation";
 import { editUserGQL } from "graphql/mutations/userMutation";
-import Alert from "components/MyAlert/Alert";
+import AlertMessage from "components/MyAlert/Alert";
 import useForm from "utils/useForm/UseForm";
 import { EditUserSchema, RegisterSchema } from "./UserSchema";
 import {
@@ -62,14 +62,14 @@ export default function UserCU(props) {
     },
     onError: (e) => {
       handleCloseModal();
-      Alert("Error", <span>Error Fetching Account Data!</span>, "error");
+      AlertMessage("Error", <span>Error Fetching Account Data!</span>, "error");
     },
   });
 
   const [executeCreate, { loading }] = useMutation(createUserGQL, {
     onCompleted: (e) => {
       refetchUser();
-      Alert(
+      AlertMessage(
         "Completed!",
         <span>Account Created Successfully!</span>,
         "success"
@@ -78,14 +78,14 @@ export default function UserCU(props) {
     },
     onError: (e) => {
       console.log(e);
-      Alert("Error", <span>Error During Process!</span>, "error");
+      AlertMessage("Error", <span>Error During Process!</span>, "error");
     },
   });
 
   const [executeUpdate, { loading: LoadingEdit }] = useMutation(editUserGQL, {
     onCompleted: (e) => {
       refetchUser();
-      Alert(
+      AlertMessage(
         "Completed!",
         <span>Account Updated Successfully!</span>,
         "success"
@@ -94,7 +94,7 @@ export default function UserCU(props) {
     },
     onError: (e) => {
       console.log(e);
-      Alert("Error", <span>Error During Process!</span>, "error");
+      AlertMessage("Error", <span>Error During Process!</span>, "error");
     },
   });
 

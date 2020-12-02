@@ -5,15 +5,11 @@ import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import { invitationsGQL } from "graphql/queries/userQueries";
 import { deleteInvitationGQL } from "graphql/mutations/userMutation";
 import { useScreenObserverHook } from "utils/ScreenObserverHook";
-import Alert from "components/MyAlert/Alert";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  MailOutlined,
-  UserAddOutlined,
-} from "@ant-design/icons";
+import AlertMessage from "components/MyAlert/Alert";
+import { DeleteOutlined, EditOutlined, MailOutlined } from "@ant-design/icons";
 import randomIdForRow from "utils/TableKeygen";
 import InvitationCU from "./InvitationCU";
+import { isExpired } from "react-jwt";
 
 export default function InvitationList(props) {
   const [idInvitation, setIdInvitation] = useState(null);
@@ -30,10 +26,16 @@ export default function InvitationList(props) {
     {
       onCompleted: (e) => {
         const res = e.invitations;
-        setLocalData(res);
+        const result = res.map((v) => {
+          return {
+            ...v,
+            url_token: isExpired(v.url_token),
+          };
+        });
+        setLocalData(result);
       },
       onError: (e) => {
-        Alert(
+        AlertMessage(
           "Error",
           <p>
             <ul>
@@ -53,11 +55,11 @@ export default function InvitationList(props) {
   const [executeDelete, { loadingDelete }] = useMutation(deleteInvitationGQL, {
     onCompleted: () => {
       refetchInvitation();
-      Alert("Completed!", <span>Invitation Deleted!</span>, "success");
+      AlertMessage("Completed!", <span>Invitation Deleted!</span>, "success");
     },
     onError: (e) => {
       console.log(e);
-      Alert("Error", <span>Error During Process!</span>, "error");
+      AlertMessage("Error", <span>Error During Process!</span>, "error");
     },
   });
 
@@ -92,8 +94,8 @@ export default function InvitationList(props) {
     },
     {
       title: "Invitation State",
-      dataIndex: "is_valid",
-      key: "is_valid",
+      dataIndex: "answered",
+      key: "answered",
       render: (text) => (
         <Tag color={text === false ? "magenta" : "green"}>
           {text === false ? "Pending" : "Answered"}
@@ -101,10 +103,14 @@ export default function InvitationList(props) {
       ),
     },
     {
-      title: "Valid Token",
+      title: "Token State",
       dataIndex: "url_token",
       key: "url_token",
-      ellipsis: true,
+      render: (text) => (
+        <Tag color={text === true ? "magenta" : "green"}>
+          {text === true ? "Expired" : "Active"}
+        </Tag>
+      ),
     },
     {
       title: "Action",
