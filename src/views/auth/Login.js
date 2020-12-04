@@ -122,7 +122,6 @@ export default function Login(props) {
             />
           </Form.Item>
           <Form.Item>
-            <Checkbox>Remember me</Checkbox>
             <a className="login-form-forgot" href="">
               Forgot password
             </a>
@@ -134,7 +133,6 @@ export default function Login(props) {
             >
               Log in
             </Button>
-            Or <a href="#">register now!</a>
           </Form.Item>
         </form>
       </Col>

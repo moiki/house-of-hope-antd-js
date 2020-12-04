@@ -124,7 +124,7 @@ export default function InvitationList(props) {
           <Popconfirm
             placement="top"
             title={"Are you sure to delete this Account?"}
-            //    onConfirm={() => handleDelete(text)}
+            onConfirm={() => handleDelete(text)}
             okText="Yes"
             cancelText="No"
           >

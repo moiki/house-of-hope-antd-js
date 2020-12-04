@@ -10,7 +10,7 @@ const DescriptionItem = ({ title, content }) => (
 );
 
 export default function MyProfile(props) {
-  const { name, email, open, toggle } = props;
+  const { currentUser, open, toggle } = props;
   return (
     <Drawer
       width={640}
@@ -23,8 +23,8 @@ export default function MyProfile(props) {
         className="site-description-item-profile-p"
         style={{ marginBottom: 24 }}
       >
-        <Avatar email={email} name={name} />
-        <p>{name}</p>
+        <Avatar email={currentUser.email} name={currentUser.fullname} />
+        <p>{currentUser.fullname}</p>
       </div>
       <p className="site-description-item-profile-p">Personal</p>
       <Row>
@@ -32,60 +32,47 @@ export default function MyProfile(props) {
           <DescriptionItem title="Full Name" content="Lily" />
         </Col>
         <Col span={12}>
-          <DescriptionItem title="Account" content="AntDesign@example.com" />
+          <DescriptionItem title="Account" content={currentUser.email} />
         </Col>
       </Row>
       <Row>
         <Col span={12}>
-          <DescriptionItem title="City" content="HangZhou" />
+          <DescriptionItem title="Address" content={currentUser.address} />
         </Col>
         <Col span={12}>
-          <DescriptionItem title="Country" content="China🇨🇳" />
-        </Col>
-      </Row>
-      <Row>
-        <Col span={12}>
-          <DescriptionItem title="Birthday" content="February 2,1900" />
-        </Col>
-        <Col span={12}>
-          <DescriptionItem title="Website" content="-" />
+          <DescriptionItem
+            title="Profession"
+            content={currentUser.profession}
+          />
         </Col>
       </Row>
       <Row>
         <Col span={24}>
           <DescriptionItem
-            title="Message"
-            content="Make things as simple as possible but no simpler."
+            title="System Role"
+            content={currentUser.role.length > 0 ? currentUser.role[0] : " - "}
           />
         </Col>
       </Row>
       <Divider />
-      <p className="site-description-item-profile-p">Company</p>
+      <p className="site-description-item-profile-p">
+        Bradley's House Of Hope Colaboration Role
+      </p>
       <Row>
         <Col span={12}>
-          <DescriptionItem title="Position" content="Programmer" />
+          <DescriptionItem title="Clinic" content="Blufields Main Clinic" />
         </Col>
         <Col span={12}>
-          <DescriptionItem title="Responsibilities" content="Coding" />
+          <DescriptionItem title="Clinic Role" content={<a>Therapist</a>} />
         </Col>
       </Row>
       <Row>
+        <Col span={12}></Col>
         <Col span={12}>
-          <DescriptionItem title="Department" content="XTech" />
-        </Col>
-        <Col span={12}>
-          <DescriptionItem title="Supervisor" content={<a>Lin</a>} />
+          <DescriptionItem title="Responsibilities" content="ETC..." />
         </Col>
       </Row>
-      <Row>
-        <Col span={24}>
-          <DescriptionItem
-            title="Skills"
-            content="C / C + +, data structures, software engineering, operating systems, computer networks, databases, compiler theory, computer architecture, Microcomputer Principle and Interface Technology, Computer English, Java, ASP, etc."
-          />
-        </Col>
-      </Row>
-      <Divider />
+      {/* <Divider />
       <p className="site-description-item-profile-p">Contacts</p>
       <Row>
         <Col span={12}>
@@ -94,7 +81,7 @@ export default function MyProfile(props) {
         <Col span={12}>
           <DescriptionItem title="Phone Number" content="+86 181 0000 0000" />
         </Col>
-      </Row>
+      </Row> */}
     </Drawer>
   );
 }

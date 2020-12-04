@@ -16,6 +16,7 @@ const meGQL = gql`
       full_name
       email
       phone
+      address
       profession
       roles {
         role_name

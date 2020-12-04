@@ -1,12 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Avatar, Image, Layout, Menu, PageHeader } from "antd";
-import {
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
 import { Footer } from "antd/lib/layout/layout";
 import MainPagesList from "../../PagesList";
 import { NavLink, Route, Switch } from "react-router-dom";
@@ -84,8 +78,8 @@ export default function Admin(props) {
                 <SubMenu icon={v.icon} key={i} title={v.title}>
                   {v.children.map((f, g) => {
                     if (
-                      v.layout === "admin" &&
-                      v.allowedRoles.some((route) =>
+                      f.layout === "admin" &&
+                      f.allowedRoles.some((route) =>
                         state.user.role.includes(route)
                       )
                     ) {

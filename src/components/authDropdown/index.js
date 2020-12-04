@@ -39,12 +39,7 @@ export default function AuthDropdown(props) {
           <Avatar email={props.email} name={props.name} round size={40} />
         </a>
       </Dropdown>
-      <MyProfile
-        open={openProf}
-        toggle={toggleOpen}
-        name={state.user.fullname}
-        email={state.user.email}
-      />
+      <MyProfile open={openProf} toggle={toggleOpen} currentUser={state.user} />
     </React.Fragment>
   );
 }

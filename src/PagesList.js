@@ -1,5 +1,12 @@
+import ClinicsView from "views/clinics";
+import ClinicManager from "views/clinics/ClinicManager";
 import Home from "views/home";
 import ManagementView from "views/management";
+import PacientsView from "views/pacients";
+import PacientsManager from "views/pacients/PacientManager";
+import RoutesView from "views/workRoutes";
+import RoutesCalendar from "views/workRoutes/RoutesCalendar";
+import RoutesManager from "views/workRoutes/RoutesManager";
 import Error404 from "./components/blocked/Error404";
 
 const MainPagesList = [
@@ -38,7 +45,7 @@ const MainPagesList = [
     path: "routes/review",
     icon: null,
     layout: "admin",
-    component: Error404,
+    component: RoutesView,
     allowedRoles: [
       "Root",
       "Administrator",
@@ -52,7 +59,7 @@ const MainPagesList = [
     path: "routes/manage",
     icon: "null",
     layout: "admin",
-    component: Error404,
+    component: RoutesManager,
     allowedRoles: ["Root", "Administrator"],
   },
   {
@@ -75,7 +82,7 @@ const MainPagesList = [
     path: "pacients/review",
     icon: null,
     layout: "admin",
-    component: Error404,
+    component: PacientsView,
     allowedRoles: [
       "Root",
       "Administrator",
@@ -89,7 +96,7 @@ const MainPagesList = [
     path: "pacients/manage",
     icon: "null",
     layout: "admin",
-    component: Error404,
+    component: PacientsManager,
     allowedRoles: ["Root", "Administrator", "Local Member"],
   },
   {
@@ -112,7 +119,7 @@ const MainPagesList = [
     path: "clinics/review",
     icon: null,
     layout: "admin",
-    component: Error404,
+    component: ClinicsView,
     allowedRoles: [
       "Root",
       "Administrator",
@@ -126,7 +133,7 @@ const MainPagesList = [
     path: "clinics/manage",
     icon: "null",
     layout: "admin",
-    component: Error404,
+    component: ClinicManager,
     allowedRoles: ["Root", "Administrator"],
   },
   {
@@ -134,7 +141,7 @@ const MainPagesList = [
     path: "routes/calendar",
     icon: "calendar_today",
     layout: "admin",
-    component: Error404,
+    component: RoutesCalendar,
     children: null,
     show: true,
     allowedRoles: [
