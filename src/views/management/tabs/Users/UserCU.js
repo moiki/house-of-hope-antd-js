@@ -5,19 +5,7 @@ import { editUserGQL } from "graphql/mutations/userMutation";
 import AlertMessage from "components/MyAlert/Alert";
 import useForm from "utils/useForm/UseForm";
 import { EditUserSchema, RegisterSchema } from "./UserSchema";
-import {
-  Tooltip,
-  Cascader,
-  Select,
-  Row,
-  Col,
-  Button,
-  Modal,
-  Form,
-  Input,
-  AutoComplete,
-  Spin,
-} from "antd";
+import { Tooltip, Select, Row, Col, Form, Input, Spin } from "antd";
 import { MdSupervisorAccount } from "react-icons/md";
 import { AccountStore } from "views/management";
 import { QuestionCircleOutlined } from "@ant-design/icons";

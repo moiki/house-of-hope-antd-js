@@ -1,14 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Table } from "antd";
 import moment from "moment";
 import randomIdForRow from "utils/TableKeygen";
 import { useScreenObserverHook } from "utils/ScreenObserverHook";
+import { clinicListGQL } from "graphql/queries/clinicsQueries";
 
 export default function ClinicManager() {
   const [loaded, setLoaded] = useState(false);
+  const [idClinic, setIdClinic] = useState(null);
   const { setRef, visible } = useScreenObserverHook();
   const [localData, setLocalData] = useState([]);
+  const [modalClinicState, setModalClinicState] = useState(false);
+  const handleModalClinic = () => setModalClinicState(!modalClinicState);
+
+  const handleClickClose = () => {
+    handleModalClinic();
+    if (idClinic) {
+      setIdClinic(null);
+    }
+  };
+
   const columns = [
     {
       title: "Clinic Name",
@@ -60,8 +72,37 @@ export default function ClinicManager() {
       ),
     },
   ];
+
+  const [refetchClinic, { loading }] = useLazyQuery(clinicListGQL, {
+    onCompleted: (e) => {
+      setLocalData(e.result);
+    },
+    onError: (e) => {
+      AlertMessage(
+        "Error",
+        <p>
+          <ul>
+            {e.graphQLErrors.length > 0 ? (
+              e.graphQLErrors.map((v, i) => <li key={i}>{v.message}</li>)
+            ) : (
+              <p>{e.message}</p>
+            )}
+          </ul>
+        </p>,
+        "error"
+      );
+    },
+  });
+
+  useEffect(() => {
+    if (visible && !loaded) {
+      refetchClinic();
+      setLoaded(true);
+    }
+  }, [visible]);
+
   return (
-    <div>
+    <div ref={setRef}>
       <Button
         type="primary"
         shape="round"
@@ -77,6 +118,14 @@ export default function ClinicManager() {
         dataSource={localData}
         rowKey={() => randomIdForRow()}
       />
+      {modalClinicState && (
+        <UserCU
+          idClinic={idClinic}
+          refetchUser={refetchClinic}
+          handleCloseModal={handleClickClose}
+          openModal={modalClinicState}
+        />
+      )}
     </div>
   );
 }
