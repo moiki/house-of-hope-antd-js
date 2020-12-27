@@ -5,6 +5,10 @@ import moment from "moment";
 import randomIdForRow from "utils/TableKeygen";
 import { useScreenObserverHook } from "utils/ScreenObserverHook";
 import { clinicListGQL } from "graphql/queries/clinicsQueries";
+import { deleteClinicGQL } from "graphql/mutations/clinicsMutation";
+import ClinicCU from "./ClinicCU";
+import { useLazyQuery, useMutation } from "@apollo/react-hooks";
+import AlertMessage from "components/MyAlert/Alert";
 
 export default function ClinicManager() {
   const [loaded, setLoaded] = useState(false);
@@ -18,6 +22,52 @@ export default function ClinicManager() {
     handleModalClinic();
     if (idClinic) {
       setIdClinic(null);
+    }
+  };
+
+  const [refetchClinic, { loadingFetch }] = useLazyQuery(clinicListGQL, {
+    onCompleted: (e) => {
+      setLocalData(e.result);
+    },
+    onError: (e) => {
+      AlertMessage(
+        "Error",
+        <div>
+          <ul>
+            {e.graphQLErrors.length > 0 ? (
+              e.graphQLErrors.map((v, i) => <li key={i}>{v.message}</li>)
+            ) : (
+              <p>{e.message}</p>
+            )}
+          </ul>
+        </div>,
+        "error"
+      );
+    },
+  });
+
+  const [executeDelete, { loadingDelete }] = useMutation(deleteClinicGQL, {
+    onCompleted: () => {
+      refetchClinic();
+      AlertMessage("Completed!", <span>Account Deleted!</span>, "success");
+    },
+    onError: (e) => {
+      console.log(e);
+      AlertMessage("Error", <span>Error During Process!</span>, "error");
+    },
+  });
+
+  const handleEdit = (e) => {
+    setIdClinic(e);
+    handleModalClinic();
+  };
+  const handleDelete = (e) => {
+    if (e) {
+      executeDelete({
+        variables: {
+          id: e,
+        },
+      });
     }
   };
 
@@ -54,13 +104,17 @@ export default function ClinicManager() {
       key: "id",
       render: (text) => (
         <Space size="middle">
-          <Button type="ghost" icon={<EditOutlined />}>
+          <Button
+            type="ghost"
+            onClick={() => handleEdit(text)}
+            icon={<EditOutlined />}
+          >
             Edit
           </Button>
           <Popconfirm
             placement="top"
-            title={"Are you sure to delete this Account?"}
-            // onConfirm={() => handleDelete(text)}
+            title={"Are you sure to delete this Clinic?"}
+            onConfirm={() => handleDelete(text)}
             okText="Yes"
             cancelText="No"
           >
@@ -72,27 +126,6 @@ export default function ClinicManager() {
       ),
     },
   ];
-
-  const [refetchClinic, { loading }] = useLazyQuery(clinicListGQL, {
-    onCompleted: (e) => {
-      setLocalData(e.result);
-    },
-    onError: (e) => {
-      AlertMessage(
-        "Error",
-        <p>
-          <ul>
-            {e.graphQLErrors.length > 0 ? (
-              e.graphQLErrors.map((v, i) => <li key={i}>{v.message}</li>)
-            ) : (
-              <p>{e.message}</p>
-            )}
-          </ul>
-        </p>,
-        "error"
-      );
-    },
-  });
 
   useEffect(() => {
     if (visible && !loaded) {
@@ -106,7 +139,7 @@ export default function ClinicManager() {
       <Button
         type="primary"
         shape="round"
-        // onClick={handleModalInvitation}
+        onClick={handleModalClinic}
         icon={<PlusOutlined />}
       >
         Add New Clinic
@@ -114,14 +147,14 @@ export default function ClinicManager() {
       <Table
         pagination={{ position: ["bottomCenter"], pageSize: 6 }}
         columns={columns}
-        // loading={loadingInvitation || loadingDelete}
+        loading={loadingFetch || loadingDelete}
         dataSource={localData}
         rowKey={() => randomIdForRow()}
       />
       {modalClinicState && (
-        <UserCU
+        <ClinicCU
           idClinic={idClinic}
-          refetchUser={refetchClinic}
+          refetchClinics={refetchClinic}
           handleCloseModal={handleClickClose}
           openModal={modalClinicState}
         />

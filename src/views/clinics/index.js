@@ -15,7 +15,7 @@ export default function ClinicsView() {
     onError: (e) => {
       AlertMessage(
         "Error",
-        <p>
+        <div>
           <ul>
             {e.graphQLErrors.length > 0 ? (
               e.graphQLErrors.map((v, i) => <li key={i}>{v.message}</li>)
@@ -23,7 +23,7 @@ export default function ClinicsView() {
               <p>{e.message}</p>
             )}
           </ul>
-        </p>,
+        </div>,
         "error"
       );
     },

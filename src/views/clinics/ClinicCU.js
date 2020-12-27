@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BeatLoader } from "react-spinners";
 import ModalForm from "components/modalForm";
 import { Tooltip, Select, Row, Col, Form, Input, Spin } from "antd";
-const { Option } = Select;
-import { useMutation } from "@apollo/react-hooks";
+import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import AlertMessage from "components/MyAlert/Alert";
 import {
   createClinicGQL,
@@ -11,6 +10,9 @@ import {
 } from "graphql/mutations/clinicsMutation";
 import { clinicSchema } from "./clinicSchema";
 import { getClinicGQL } from "graphql/queries/clinicsQueries";
+import { RiHospitalLine } from "react-icons/ri";
+import useForm from "utils/useForm/UseForm";
+const { Option } = Select;
 
 export default function ClinicCU(props) {
   const { openModal, handleCloseModal, idClinic, refetchClinics } = props;
@@ -21,11 +23,10 @@ export default function ClinicCU(props) {
       updateValues({
         id: res.id,
         name: res.name,
-        decription: res.decription,
+        description: res.description,
         city: res.city,
         address: res.address,
         phone_number: res.phone,
-        address: res.address,
       });
     },
     onError: (e) => {
@@ -106,7 +107,7 @@ export default function ClinicCU(props) {
     handleSubmit,
     handleBlur,
     updateValues,
-    // updateSchema,
+    // updateSchema,<RiHospitalLine className="anticon" />
   } = useForm(submitForm, defaultValues, clinicSchema);
 
   useEffect(() => {
@@ -123,12 +124,12 @@ export default function ClinicCU(props) {
       loading={loading || LoadingEdit}
       title={
         <span style={{ display: "flex", alignItems: "center" }}>
-          <MdSupervisorAccount
+          <RiHospitalLine
             size={30}
             className="cl-primary"
             style={{ marginRight: 10 }}
           />{" "}
-          Create a new account
+          Create a new Clinic
         </span>
       }
       style={{ top: 20 }}
@@ -150,7 +151,7 @@ export default function ClinicCU(props) {
               <Form.Item
                 validateStatus={errors.name ? "error" : "validating"}
                 help={errors.name}
-                label="First Name"
+                label="Name of Clinic"
               >
                 <Input
                   id="name"
@@ -215,9 +216,9 @@ export default function ClinicCU(props) {
             </Col>
           </Row>
           <Form.Item
-            validateStatus={errors.address ? "error" : "validating"}
-            help={errors.address}
-            label={<span>Address</span>}
+            validateStatus={errors.description ? "error" : "validating"}
+            help={errors.description}
+            label={<span>Description</span>}
           >
             <Input.TextArea
               id="description"

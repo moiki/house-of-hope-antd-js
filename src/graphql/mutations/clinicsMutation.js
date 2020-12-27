@@ -6,7 +6,7 @@ export const createClinicGQL = gql`
     $description: String!
     $phone_number: String!
     $address: String!
-    $city: [String!]!
+    $city: String!
   ) {
     createClinic(
       name: $name
@@ -28,7 +28,7 @@ export const updateClinicGQL = gql`
     $description: String!
     $phone_number: String!
     $address: String!
-    $city: [String!]!
+    $city: String!
   ) {
     updateClinic(
       id: $id
