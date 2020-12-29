@@ -1,91 +1,50 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import { createUserGQL } from "graphql/mutations/userMutation";
-import { editUserGQL } from "graphql/mutations/userMutation";
 import AlertMessage from "components/MyAlert/Alert";
+import csc from "country-state-city";
 import useForm from "utils/useForm/UseForm";
-import { EditUserSchema, RegisterSchema } from "./UserSchema";
-import { Tooltip, Select, Row, Col, Form, Input, Spin } from "antd";
+import { Tooltip, Select, Row, Col, Form, Input, Spin, Image } from "antd";
 import { MdSupervisorAccount } from "react-icons/md";
-import { AccountStore } from "views/management";
-import { QuestionCircleOutlined } from "@ant-design/icons";
-import { getUserGQL } from "graphql/queries/userQueries";
-import { BeatLoader } from "react-spinners";
-import ModalForm from "components/modalForm";
+import Icon, { QuestionCircleOutlined } from "@ant-design/icons";
+import Modal from "antd/lib/modal/Modal";
+import logo from "assets/img/LOGO2.ico";
+import { PasswordRules } from "views/management/tabs/Users/UserCU";
+import { RegisterSchema } from "views/management/tabs/Users/UserSchema";
 const { Option } = Select;
 
-export const PasswordRules = () => {
-  return (
-    <div className="h-tooltip">
-      <ul>
-        <li>MUST contain at least 8 characters (12+ recommended)</li>
-        <li>MUST contain at least one uppercase letter</li>
-        <li>MUST contain at least one lowercase letter</li>
-        <li>MUST contain at least one number</li>
-        <li>{`MUST contain at least one special character (!*+,-./?@[]^_{|})`}</li>
-      </ul>
-    </div>
-  );
-};
+export default function SignUpView() {
+  const countryList = csc.getAllCountries();
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
 
-export default function UserCU(props) {
-  const { roleList } = useContext(AccountStore);
+  const handleCountry = (e) => {
+    const states = csc.getStatesOfCountry(e);
+    const cu = csc.getCountryById(e);
+    handleChange(cu.name, "country");
+    setStates(states);
+  };
 
-  const { openModal, handleCloseModal, idUser, refetchUser, mySchema } = props;
-
-  const [fetchUser, { loading: loadingFetch }] = useLazyQuery(getUserGQL, {
-    onCompleted: (e) => {
-      const res = e.getUser;
-      updateSchema(EditUserSchema);
-      updateValues({
-        id: res.id,
-        first_name: res.first_name,
-        last_name: res.last_name,
-        email: res.email,
-        profession: res.profession,
-        address: res.address,
-        phone_number: res.phone,
-        role: res.roles.length ? res.roles[0].role_name : null,
-      });
-    },
-    onError: (e) => {
-      handleCloseModal();
-      AlertMessage("Error", <span>Error Fetching Account Data!</span>, "error");
-    },
-  });
+  const handleState = (e) => {
+    const states = csc.getCitiesOfState(e);
+    const st = csc.getStateById(e);
+    handleChange(st.name, "state");
+    setCities(states);
+  };
 
   const [executeCreate, { loading }] = useMutation(createUserGQL, {
     onCompleted: (e) => {
-      refetchUser();
       AlertMessage(
         "Completed!",
         <span>Account Created Successfully!</span>,
         "success"
       );
-      handleCloseModal();
     },
     onError: (e) => {
       console.log(e);
       AlertMessage("Error", <span>Error During Process!</span>, "error");
     },
   });
-
-  const [executeUpdate, { loading: LoadingEdit }] = useMutation(editUserGQL, {
-    onCompleted: (e) => {
-      refetchUser();
-      AlertMessage(
-        "Completed!",
-        <span>Account Updated Successfully!</span>,
-        "success"
-      );
-      handleCloseModal();
-    },
-    onError: (e) => {
-      console.log(e);
-      AlertMessage("Error", <span>Error During Process!</span>, "error");
-    },
-  });
-
   const defaultValues = {
     id: null,
     first_name: "",
@@ -100,7 +59,7 @@ export default function UserCU(props) {
   };
   const submitForm = async () => {
     const sbm = {
-      id: idUser,
+      id: null,
       first_name: values.first_name,
       last_name: values.last_name,
       email: values.email,
@@ -110,19 +69,11 @@ export default function UserCU(props) {
       password: values.password,
       roles: [values.role],
     };
-    if (idUser) {
-      executeUpdate({
-        variables: {
-          ...sbm,
-        },
-      });
-    } else {
-      executeCreate({
-        variables: {
-          ...sbm,
-        },
-      });
-    }
+    executeCreate({
+      variables: {
+        ...sbm,
+      },
+    });
   };
   const {
     values,
@@ -133,37 +84,20 @@ export default function UserCU(props) {
     updateValues,
     updateSchema,
   } = useForm(submitForm, defaultValues, RegisterSchema);
-
-  useEffect(() => {
-    if (idUser) {
-      fetchUser({
-        variables: { id: idUser },
-      });
-    }
-  }, [idUser]);
-
   return (
-    <ModalForm
-      openModal={openModal}
-      loading={loading || LoadingEdit}
-      title={
-        <span style={{ display: "flex", alignItems: "center" }}>
-          <MdSupervisorAccount
-            size={30}
-            className="cl-primary"
-            style={{ marginRight: 10 }}
-          />{" "}
-          Create a new account
-        </span>
-      }
-      style={{ top: 20 }}
-      handleClose={handleCloseModal}
-      handleSubmit={handleSubmit}
-    >
-      <Spin
-        spinning={loadingFetch}
-        className="custom-spinner"
-        indicator={<BeatLoader size={20} color="#084954" loading />}
+    <div className="signup" style={{ backgroundColor: "#126270" }}>
+      <Modal
+        closable={false}
+        mask={false}
+        title={
+          <span style={{ display: "flex", alignItems: "center" }}>
+            <Image width={50} src={logo} style={{ marginRight: 20 }} /> Welcome!
+            Please complete your Sign Up
+          </span>
+        }
+        visible={true}
+        onOk={() => {}}
+        onCancel={() => {}}
       >
         <Form
           layout="vertical"
@@ -261,18 +195,71 @@ export default function UserCU(props) {
                 help={errors.role}
                 label="Role"
               >
-                <Select
+                <Input
+                  disabled
                   id="role"
                   name="role"
                   autoComplete={"false"}
                   onBlur={handleBlur}
-                  value={values.role}
-                  onChange={(value) => handleChange(value, "role")}
+                  value={"Administrator"}
+                  onChange={handleChange}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={[10]}>
+            <Col span={12}>
+              <Form.Item
+                validateStatus={errors.country ? "error" : "validating"}
+                help={errors.country}
+                label="country"
+              >
+                <Select
+                  showSearch
+                  id="country"
+                  name="country"
+                  autoComplete={"false"}
+                  onBlur={handleBlur}
+                  value={values.country}
+                  onChange={(value) => {
+                    handleCountry(value);
+                  }}
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
                 >
-                  {roleList &&
-                    roleList.map((v) => (
-                      <Option key={v.id} value={v.role_name}>
-                        {v.role_name}
+                  {countryList &&
+                    countryList.map((v) => (
+                      <Option key={v.id} value={v.id}>
+                        {v.name}
+                      </Option>
+                    ))}
+                </Select>
+              </Form.Item>
+            </Col>{" "}
+            <Col span={12}>
+              <Form.Item
+                validateStatus={errors.state ? "error" : "validating"}
+                help={errors.state}
+                label="state"
+              >
+                <Select
+                  showSearch
+                  id="state"
+                  name="state"
+                  autoComplete={"false"}
+                  onBlur={handleBlur}
+                  value={values.state}
+                  onChange={(value) => {
+                    handleState(value);
+                  }}
+                >
+                  {states &&
+                    states.map((v) => (
+                      <Option key={v.id} value={v.id}>
+                        {v.name}
                       </Option>
                     ))}
                 </Select>
@@ -293,51 +280,49 @@ export default function UserCU(props) {
               onChange={handleChange}
             />
           </Form.Item>
-          {!idUser && (
-            <React.Fragment>
-              <Form.Item
-                validateStatus={errors.password ? "error" : "validating"}
-                help={errors.password}
-                label={
-                  <span>
-                    Password&nbsp;
-                    <Tooltip color="white" title={<PasswordRules />}>
-                      <QuestionCircleOutlined />
-                    </Tooltip>
-                  </span>
-                }
-              >
-                <Input.Password
-                  id="password"
-                  name="password"
-                  autoComplete={"false"}
-                  onBlur={handleBlur}
-                  value={values.password}
-                  onChange={handleChange}
-                />
-              </Form.Item>
+          <React.Fragment>
+            <Form.Item
+              validateStatus={errors.password ? "error" : "validating"}
+              help={errors.password}
+              label={
+                <span>
+                  Password&nbsp;
+                  <Tooltip color="white" title={<PasswordRules />}>
+                    <QuestionCircleOutlined />
+                  </Tooltip>
+                </span>
+              }
+            >
+              <Input.Password
+                id="password"
+                name="password"
+                autoComplete={"false"}
+                onBlur={handleBlur}
+                value={values.password}
+                onChange={handleChange}
+              />
+            </Form.Item>
 
-              <Form.Item
-                name="confirm"
-                label="Confirm Password"
-                validateStatus={
-                  errors.password_confirmation ? "error" : "validating"
-                }
-                help={errors.password_confirmation}
-              >
-                <Input.Password
-                  id="password_confirmation"
-                  name="password_confirmation"
-                  autoComplete={"false"}
-                  onBlur={handleBlur}
-                  value={values.password_confirmation}
-                  onChange={handleChange}
-                />
-              </Form.Item>
-            </React.Fragment>
-          )}
+            <Form.Item
+              name="confirm"
+              label="Confirm Password"
+              validateStatus={
+                errors.password_confirmation ? "error" : "validating"
+              }
+              help={errors.password_confirmation}
+            >
+              <Input.Password
+                id="password_confirmation"
+                name="password_confirmation"
+                autoComplete={"false"}
+                onBlur={handleBlur}
+                value={values.password_confirmation}
+                onChange={handleChange}
+              />
+            </Form.Item>
+          </React.Fragment>
         </Form>
-      </Spin>
-    </ModalForm>
+      </Modal>
+    </div>
   );
 }

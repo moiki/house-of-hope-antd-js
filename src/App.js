@@ -8,6 +8,7 @@ import { createBrowserHistory } from "history";
 import { ApolloProvider } from "@apollo/react-hooks";
 import AuthLayout from "layout/auth/AuthLayout";
 import Login from "views/auth/Login";
+import SignUpView from "views/signup";
 
 export const MainStore = createContext();
 export const hist = createBrowserHistory();
@@ -40,6 +41,10 @@ function App() {
             <Route
               path="/auth/login"
               render={(props) => <Login {...props} />}
+            />
+            <Route
+              path="/auth/signup"
+              render={(props) => <SignUpView {...props} />}
             />
             <Redirect to="/admin" />
           </Switch>

@@ -150,8 +150,8 @@ const routes = [
     show: false,
   },
   {
-    title: "Sign In",
-    path: "register",
+    title: "Sign Un",
+    path: "signup",
     icon: "account_circle",
     layout: "auth",
     children: null,

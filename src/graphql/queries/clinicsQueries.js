@@ -6,6 +6,7 @@ export const clinicsReviewGQL = gql`
       id
       name
       description
+      image
     }
   }
 `;
