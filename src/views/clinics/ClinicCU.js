@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BeatLoader } from "react-spinners";
 import ModalForm from "components/modalForm";
 import { Tooltip, Select, Row, Col, Form, Input, Spin } from "antd";
@@ -12,11 +12,22 @@ import { clinicSchema } from "./clinicSchema";
 import { getClinicGQL } from "graphql/queries/clinicsQueries";
 import { RiHospitalLine } from "react-icons/ri";
 import useForm from "utils/useForm/UseForm";
+import csc from "country-state-city";
+import { departments } from "utils/NationalCitiesHandler";
+import { comunities } from "utils/NationalCitiesHandler";
 const { Option } = Select;
 
 export default function ClinicCU(props) {
   const { openModal, handleCloseModal, idClinic, refetchClinics } = props;
+  const countryList = csc.getAllCountries();
+  const states = departments();
+  const [cities, setCities] = useState([]);
 
+  const handleState = (e) => {
+    const states = comunities(e);
+    handleChange(e, "state");
+    setCities(states);
+  };
   const [fetchClinic, { loading: loadingFetch }] = useLazyQuery(getClinicGQL, {
     onCompleted: (e) => {
       const res = e.result;
@@ -24,6 +35,8 @@ export default function ClinicCU(props) {
         id: res.id,
         name: res.name,
         description: res.description,
+        country: res.country || "Nicaragua",
+        state: res.state,
         city: res.city,
         address: res.address,
         phone_number: res.phone,
@@ -74,6 +87,8 @@ export default function ClinicCU(props) {
     name: "",
     description: "",
     address: "",
+    country: "Nicaragua",
+    state: "",
     phone_number: "",
     city: "",
   };
@@ -82,6 +97,8 @@ export default function ClinicCU(props) {
       id: idClinic,
       name: values.name,
       description: values.description,
+      country: values.country,
+      state: values.state,
       city: values.city,
       address: values.address,
       phone_number: values.phone_number,
@@ -180,22 +197,86 @@ export default function ClinicCU(props) {
               </Form.Item>
             </Col>
           </Row>
-
+          <Row gutter={[10]}>
+            <Col span={12}>
+              <Form.Item
+                validateStatus={errors.country ? "error" : "validating"}
+                help={errors.country}
+                label="country"
+              >
+                <Input
+                  disabled
+                  id="country"
+                  name="country"
+                  autoComplete={"false"}
+                  onBlur={handleBlur}
+                  value={values.country || "Nicaragua"}
+                  onChange={handleChange}
+                />
+              </Form.Item>
+            </Col>{" "}
+            <Col span={12}>
+              <Form.Item
+                validateStatus={errors.state ? "error" : "validating"}
+                help={errors.state}
+                label="State/Dept"
+              >
+                <Select
+                  showSearch
+                  id="state"
+                  name="state"
+                  autoComplete={"false"}
+                  onBlur={handleBlur}
+                  value={values.state}
+                  onChange={(value) => {
+                    handleState(value);
+                  }}
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {states &&
+                    states.map((v, i) => (
+                      <Option key={v.i} value={v.value}>
+                        {v.value}
+                      </Option>
+                    ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
           <Row gutter={[10]}>
             <Col span={12}>
               <Form.Item
                 validateStatus={errors.city ? "error" : "validating"}
                 help={errors.city}
-                label="City"
+                label="Town/Comunity"
               >
-                <Input
+                <Select
+                  showSearch
                   id="city"
                   name="city"
                   autoComplete={"false"}
                   onBlur={handleBlur}
                   value={values.city}
-                  onChange={handleChange}
-                />
+                  onChange={(value) => {
+                    handleChange(value, "city");
+                  }}
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {cities &&
+                    cities.map((v, i) => (
+                      <Option key={v.i} value={v.value}>
+                        {v.value}
+                      </Option>
+                    ))}
+                </Select>
               </Form.Item>
             </Col>
             <Col span={12}>

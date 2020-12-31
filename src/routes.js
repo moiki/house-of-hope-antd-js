@@ -149,14 +149,7 @@ const routes = [
     children: null,
     show: false,
   },
-  {
-    title: "Sign Un",
-    path: "signup",
-    icon: "account_circle",
-    layout: "auth",
-    children: null,
-    show: false,
-  },
+
   {
     title: "Management",
     path: "management",

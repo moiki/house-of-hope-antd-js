@@ -12,6 +12,16 @@ export const clinicSchema = {
     "any.required": "Description Is Required",
     "string.empty": "Description Is Required",
   }),
+  country: Joi.string().required().messages({
+    "string.base": "Country Is Required",
+    "any.required": "Country Is Required",
+    "string.empty": "Country Is Required",
+  }),
+  state: Joi.string().required().messages({
+    "string.base": "State Is Required",
+    "any.required": "State Is Required",
+    "string.empty": "State Is Required",
+  }),
   city: Joi.string().required().messages({
     "string.base": "City Is Required",
     "any.required": "City Is Required",

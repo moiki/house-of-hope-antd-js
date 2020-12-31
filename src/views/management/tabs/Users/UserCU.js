@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import { createUserGQL } from "graphql/mutations/userMutation";
 import { editUserGQL } from "graphql/mutations/userMutation";
@@ -12,6 +12,7 @@ import { QuestionCircleOutlined } from "@ant-design/icons";
 import { getUserGQL } from "graphql/queries/userQueries";
 import { BeatLoader } from "react-spinners";
 import ModalForm from "components/modalForm";
+import csc from "country-state-city";
 const { Option } = Select;
 
 export const PasswordRules = () => {
@@ -30,8 +31,23 @@ export const PasswordRules = () => {
 
 export default function UserCU(props) {
   const { roleList } = useContext(AccountStore);
-
+  const countryList = csc.getAllCountries();
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
   const { openModal, handleCloseModal, idUser, refetchUser, mySchema } = props;
+  const handleCountry = (e) => {
+    const states = csc.getStatesOfCountry(e);
+    const cu = csc.getCountryById(e);
+    handleChange(cu.name, "country");
+    setStates(states);
+  };
+
+  const handleState = (e) => {
+    const states = csc.getCitiesOfState(e);
+    const st = csc.getStateById(e);
+    handleChange(st.name, "state");
+    setCities(states);
+  };
 
   const [fetchUser, { loading: loadingFetch }] = useLazyQuery(getUserGQL, {
     onCompleted: (e) => {
@@ -44,6 +60,9 @@ export default function UserCU(props) {
         email: res.email,
         profession: res.profession,
         address: res.address,
+        country: res.country,
+        state: res.state,
+        city: res.city,
         phone_number: res.phone,
         role: res.roles.length ? res.roles[0].role_name : null,
       });
@@ -93,6 +112,9 @@ export default function UserCU(props) {
     email: "",
     profession: "",
     address: "",
+    country: "",
+    state: "",
+    city: "",
     phone_number: "",
     password: "",
     password_confirmation: "",
@@ -106,6 +128,9 @@ export default function UserCU(props) {
       email: values.email,
       profession: values.profession,
       address: values.address,
+      country: values.country,
+      state: values.state,
+      city: values.city,
       phone_number: values.phone_number,
       password: values.password,
       roles: [values.role],
@@ -273,6 +298,101 @@ export default function UserCU(props) {
                     roleList.map((v) => (
                       <Option key={v.id} value={v.role_name}>
                         {v.role_name}
+                      </Option>
+                    ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={[10]}>
+            <Col span={8}>
+              <Form.Item
+                validateStatus={errors.country ? "error" : "validating"}
+                help={errors.country}
+                label="country"
+              >
+                <Select
+                  showSearch
+                  id="country"
+                  name="country"
+                  autoComplete={"false"}
+                  onBlur={handleBlur}
+                  value={values.country}
+                  onChange={(value) => {
+                    handleCountry(value);
+                  }}
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {countryList &&
+                    countryList.map((v) => (
+                      <Option key={v.id} value={v.id}>
+                        {v.name}
+                      </Option>
+                    ))}
+                </Select>
+              </Form.Item>
+            </Col>{" "}
+            <Col span={8}>
+              <Form.Item
+                validateStatus={errors.state ? "error" : "validating"}
+                help={errors.state}
+                label="state"
+              >
+                <Select
+                  showSearch
+                  id="state"
+                  name="state"
+                  autoComplete={"false"}
+                  onBlur={handleBlur}
+                  value={values.state}
+                  onChange={(value) => {
+                    handleState(value);
+                  }}
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {states &&
+                    states.map((v) => (
+                      <Option key={v.id} value={v.id}>
+                        {v.name}
+                      </Option>
+                    ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                validateStatus={errors.city ? "error" : "validating"}
+                help={errors.city}
+                label="Town/Comunity"
+              >
+                <Select
+                  showSearch
+                  id="city"
+                  name="city"
+                  autoComplete={"false"}
+                  onBlur={handleBlur}
+                  value={values.city}
+                  onChange={(value) => {
+                    handleChange(value, "city");
+                  }}
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {cities &&
+                    cities.map((v, i) => (
+                      <Option key={i} value={v.name}>
+                        {v.name}
                       </Option>
                     ))}
                 </Select>

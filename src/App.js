@@ -40,11 +40,13 @@ function App() {
             <Route path="/admin" render={(props) => <Admin {...props} />} />
             <Route
               path="/auth/login"
+              exact
               render={(props) => <Login {...props} />}
             />
             <Route
-              path="/auth/signup"
-              render={(props) => <SignUpView {...props} />}
+              path="/auth/signup/:token"
+              exact
+              children={(props) => <SignUpView {...props} />}
             />
             <Redirect to="/admin" />
           </Switch>

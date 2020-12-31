@@ -26,6 +26,9 @@ export const getUserGQL = gql`
       phone
       profession
       address
+      country
+      state
+      city
       roles {
         role_name
       }

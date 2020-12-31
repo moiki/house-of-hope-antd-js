@@ -9,6 +9,9 @@ export const createUserGQL = gql`
     $password: String!
     $profession: String!
     $address: String!
+    $country: String!
+    $state: String!
+    $city: String
     $roles: [String!]!
   ) {
     createUser(
@@ -19,6 +22,9 @@ export const createUserGQL = gql`
       password: $password
       profession: $profession
       address: $address
+      country: $country
+      state: $state
+      city: $city
       roles: $roles
     ) {
       message
@@ -35,6 +41,9 @@ export const editUserGQL = gql`
     $email: String!
     $phone_number: String!
     $profession: String!
+    $country: String!
+    $state: String!
+    $city: String
     $address: String
     $roles: [String!]!
   ) {
@@ -46,6 +55,9 @@ export const editUserGQL = gql`
       phone_number: $phone_number
       profession: $profession
       address: $address
+      country: $country
+      state: $state
+      city: $city
       roles: $roles
     ) {
       message

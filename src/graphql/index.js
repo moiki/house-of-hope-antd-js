@@ -13,7 +13,7 @@ const graphURI =
     ? process.env.REACT_APP_APOLLO_URI_DEV
     : process.env.REACT_APP_APOLLO_URI_PROD;
 
-const WHITE_LINKS = ["login", "signup"];
+const WHITE_LINKS = ["login", "signup", "emailInvitationCheck"];
 
 const refreshToken = async () => {
   // Get the token from LS
@@ -40,6 +40,7 @@ const refreshToken = async () => {
 
 const cache = new InMemoryCache({
   addTypename: false,
+  resultCaching: false,
 });
 const httpLink = createHttpLink({
   uri: graphURI,
