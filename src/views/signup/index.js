@@ -3,6 +3,7 @@ import {
   useApolloClient,
   useLazyQuery,
   useMutation,
+  useQuery,
 } from "@apollo/react-hooks";
 import { createUserGQL } from "graphql/mutations/userMutation";
 import { emailInvitationCheckGQL } from "graphql/queries/userQueries";
@@ -28,6 +29,7 @@ import { PasswordRules } from "views/management/tabs/Users/UserCU";
 import { RegisterSchema } from "views/management/tabs/Users/UserSchema";
 import { useHistory, useParams } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
+import { isEmpty } from "lodash";
 const { Option } = Select;
 
 const InvitationError = () => {
@@ -78,14 +80,14 @@ function SignUpView(props) {
     setCities(states);
   };
 
-  const [checkInvitation, { loading: loadingCheck }] = useLazyQuery(
+  const { loading: loadingCheck, error, data } = useQuery(
     emailInvitationCheckGQL,
     {
       onCompleted: (e) => {
-        setInvitationChecked(e.emailInvitationCheck);
+        setInvitationChecked(!isEmpty(e.emailInvitationCheck));
       },
       onError: (e) => {
-        console.log(e);
+        console.log(e.graphQLErrors);
         AlertMessage("Error", <span>Error During Process!</span>, "error");
       },
       variables: {
@@ -151,7 +153,8 @@ function SignUpView(props) {
   } = useForm(submitForm, defaultValues, RegisterSchema);
 
   useEffect(() => {
-    checkInvitation();
+    // checkInvitation();
+    console.log("HOLA");
   }, []);
 
   return (

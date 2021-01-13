@@ -3,7 +3,10 @@ import { Table, Tag, Space, Button, Popconfirm } from "antd";
 import moment from "moment";
 import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import { invitationsGQL } from "graphql/queries/userQueries";
-import { deleteInvitationGQL } from "graphql/mutations/userMutation";
+import {
+  deleteInvitationGQL,
+  resendInvitationGQL,
+} from "graphql/mutations/userMutation";
 import { useScreenObserverHook } from "utils/ScreenObserverHook";
 import AlertMessage from "components/MyAlert/Alert";
 import { DeleteOutlined, EditOutlined, MailOutlined } from "@ant-design/icons";
@@ -29,7 +32,7 @@ export default function InvitationList(props) {
         const result = res.map((v) => {
           return {
             ...v,
-            url_token: isExpired(v.url_token),
+            url_token: "", // isExpired(v.url_token),
           };
         });
         setLocalData(result);
@@ -63,6 +66,31 @@ export default function InvitationList(props) {
     },
   });
 
+  const [executeResend, { loadingResend }] = useMutation(resendInvitationGQL, {
+    onCompleted: () => {
+      refetchInvitation();
+      AlertMessage(
+        "Completed!",
+        <span>Invitation is active again!</span>,
+        "success"
+      );
+    },
+    onError: (e) => {
+      AlertMessage(
+        "Error",
+        <p>
+          <ul>
+            {e.graphQLErrors.length > 0 ? (
+              e.graphQLErrors.map((v, i) => <li key={i}>{v.message}</li>)
+            ) : (
+              <p>{e.message}</p>
+            )}
+          </ul>
+        </p>,
+        "error"
+      );
+    },
+  });
   const handleDelete = (e) => {
     if (e) {
       executeDelete({
@@ -72,6 +100,9 @@ export default function InvitationList(props) {
       });
     }
   };
+
+  const handleResend = (e) =>
+    e ? executeResend({ variables: { id: e } }) : null;
 
   const handleClickClose = () => {
     handleModalInvitation();
@@ -97,21 +128,19 @@ export default function InvitationList(props) {
       dataIndex: "answered",
       key: "answered",
       render: (text) => (
-        <Tag color={text === false ? "magenta" : "green"}>
-          {text === false ? "Pending" : "Answered"}
-        </Tag>
+        <Tag color={text === "EXPIRED" ? "magenta" : "green"}>{text}</Tag>
       ),
     },
-    {
-      title: "Token State",
-      dataIndex: "url_token",
-      key: "url_token",
-      render: (text) => (
-        <Tag color={text === true ? "magenta" : "green"}>
-          {text === true ? "Expired" : "Active"}
-        </Tag>
-      ),
-    },
+    // {
+    //   title: "Token State",
+    //   dataIndex: "url_token",
+    //   key: "url_token",
+    //   render: (text) => (
+    //     <Tag color={text === true ? "magenta" : "green"}>
+    //       {text === true ? "Expired" : "Active"}
+    //     </Tag>
+    //   ),
+    // },
     {
       title: "Action",
       dataIndex: "id",
@@ -123,7 +152,18 @@ export default function InvitationList(props) {
           </Button>
           <Popconfirm
             placement="top"
-            title={"Are you sure to delete this Account?"}
+            title={"Are you sure to enable this invitation?"}
+            onConfirm={() => handleResend(text)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button icon={<MailOutlined />} color="orange">
+              Resend Invitation
+            </Button>
+          </Popconfirm>
+          <Popconfirm
+            placement="top"
+            title={"Are you sure to delete this invitation?"}
             onConfirm={() => handleDelete(text)}
             okText="Yes"
             cancelText="No"
@@ -160,7 +200,7 @@ export default function InvitationList(props) {
       <Table
         pagination={{ position: ["bottomCenter"], pageSize: 6 }}
         columns={columns}
-        loading={loadingInvitation || loadingDelete}
+        loading={loadingInvitation || loadingDelete || loadingResend}
         dataSource={localData}
         rowKey={() => randomIdForRow()}
       />

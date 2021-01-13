@@ -50,7 +50,6 @@ export const invitationsGQL = gql`
   query invitations {
     invitations {
       id
-      url_token
       email
       answered
       created_date
@@ -59,6 +58,10 @@ export const invitationsGQL = gql`
 `;
 export const emailInvitationCheckGQL = gql`
   query emailInvitationCheck($hash: String!) {
-    emailInvitationCheck(hash: $hash)
+    emailInvitationCheck(hash: $hash) {
+      id
+      email
+      role_id
+    }
   }
 `;

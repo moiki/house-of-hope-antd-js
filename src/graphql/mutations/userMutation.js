@@ -92,3 +92,12 @@ export const deleteInvitationGQL = gql`
     }
   }
 `;
+
+export const resendInvitationGQL = gql`
+  mutation resendInvitation($id: String!) {
+    resendInvitation(id: $id) {
+      message
+      status
+    }
+  }
+`;
