@@ -48,7 +48,6 @@ const httpLink = createHttpLink({
 
 const errorHandler = onError(
   ({ graphQLErrors, operation, forward, response }) => {
-    console.log(graphQLErrors);
     let { operationName } = operation;
     if (operationName) {
       operationName = operationName.toLowerCase();
@@ -113,16 +112,13 @@ const client = new ApolloClient({
   connectToDevTools: true,
   defaultOptions: {
     watchQuery: {
-      errorPolicy: "all",
       fetchPolicy: "no-cache",
     },
     query: {
       fetchPolicy: "no-cache",
-      errorPolicy: "all",
     },
     mutate: {
       fetchPolicy: "no-cache",
-      errorPolicy: "all",
     },
   },
 });

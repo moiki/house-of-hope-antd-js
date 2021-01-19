@@ -66,31 +66,36 @@ export default function InvitationList(props) {
     },
   });
 
-  const [executeResend, { loadingResend }] = useMutation(resendInvitationGQL, {
-    onCompleted: () => {
-      refetchInvitation();
-      AlertMessage(
-        "Completed!",
-        <span>Invitation is active again!</span>,
-        "success"
-      );
-    },
-    onError: (e) => {
-      AlertMessage(
-        "Error",
-        <p>
-          <ul>
-            {e.graphQLErrors.length > 0 ? (
-              e.graphQLErrors.map((v, i) => <li key={i}>{v.message}</li>)
-            ) : (
-              <p>{e.message}</p>
-            )}
-          </ul>
-        </p>,
-        "error"
-      );
-    },
-  });
+  const [executeResend, { loadingResend, error: resError }] = useMutation(
+    resendInvitationGQL,
+    {
+      onCompleted: (e) => {
+        console.log({ e });
+        refetchInvitation();
+        AlertMessage(
+          "Completed!",
+          <span>Invitation is active again!</span>,
+          "success"
+        );
+      },
+      onError: (e) => {
+        console.log({ e });
+        AlertMessage(
+          "Error",
+          <p>
+            <ul>
+              {e.graphQLErrors.length > 0 ? (
+                e.graphQLErrors.map((v, i) => <li key={i}>{v.message}</li>)
+              ) : (
+                <p>{e.message}</p>
+              )}
+            </ul>
+          </p>,
+          "error"
+        );
+      },
+    }
+  );
   const handleDelete = (e) => {
     if (e) {
       executeDelete({
@@ -147,9 +152,6 @@ export default function InvitationList(props) {
       key: "id",
       render: (text) => (
         <Space size="middle">
-          <Button type="ghost" icon={<EditOutlined />}>
-            Edit
-          </Button>
           <Popconfirm
             placement="top"
             title={"Are you sure to enable this invitation?"}
@@ -157,7 +159,11 @@ export default function InvitationList(props) {
             okText="Yes"
             cancelText="No"
           >
-            <Button icon={<MailOutlined />} color="orange">
+            <Button
+              icon={<MailOutlined />}
+              className="ant-btn-info"
+              shape="round"
+            >
               Resend Invitation
             </Button>
           </Popconfirm>
@@ -168,7 +174,11 @@ export default function InvitationList(props) {
             okText="Yes"
             cancelText="No"
           >
-            <Button icon={<DeleteOutlined />} danger>
+            <Button
+              icon={<DeleteOutlined />}
+              className="ant-btn-danger"
+              shape="round"
+            >
               Delete
             </Button>
           </Popconfirm>
@@ -187,6 +197,7 @@ export default function InvitationList(props) {
       refetchInvitation();
     }
   }, [visible]);
+
   return (
     <div ref={setRef}>
       <Button

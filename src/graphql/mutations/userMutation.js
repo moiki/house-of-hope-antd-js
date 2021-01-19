@@ -33,6 +33,41 @@ export const createUserGQL = gql`
   }
 `;
 
+export const signUpGQL = gql`
+  mutation signUp(
+    $first_name: String!
+    $last_name: String!
+    $email: String!
+    $phone_number: String!
+    $password: String!
+    $profession: String!
+    $address: String!
+    $country: String!
+    $state: String!
+    $city: String
+    $roles: [String!]!
+    $invitation: String!
+  ) {
+    signUp(
+      first_name: $first_name
+      last_name: $last_name
+      email: $email
+      phone_number: $phone_number
+      password: $password
+      profession: $profession
+      address: $address
+      country: $country
+      state: $state
+      city: $city
+      roles: $roles
+      invitation: $invitation
+    ) {
+      message
+      id
+    }
+  }
+`;
+
 export const editUserGQL = gql`
   mutation editUser(
     $id: String!

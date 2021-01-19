@@ -26,6 +26,19 @@ body {
   background-color: #126270 !important;
   color: #fff;
 }
+
+.ant-btn-info {
+  background-color: #138d54 !important;
+  border-color: none;
+  color: #fff;
+}
+
+.ant-btn-danger {
+  background-color: #e9510a !important;
+  border-color: none;
+  color: #fff;
+}
+
 .ant-btn-primary:hover {
   background-color: #267e8d !important;
   color: #fff;

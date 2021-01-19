@@ -5,7 +5,7 @@ import {
   useMutation,
   useQuery,
 } from "@apollo/react-hooks";
-import { createUserGQL } from "graphql/mutations/userMutation";
+import { signUpGQL } from "graphql/mutations/userMutation";
 import { emailInvitationCheckGQL } from "graphql/queries/userQueries";
 import AlertMessage from "components/MyAlert/Alert";
 import csc from "country-state-city";
@@ -62,6 +62,7 @@ const InvitationError = () => {
 function SignUpView(props) {
   const countryList = csc.getAllCountries();
   const client = useApolloClient();
+  const [roleInputValue, setRoleInputValue] = useState("");
   const [invitationChecked, setInvitationChecked] = useState(false);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -80,29 +81,36 @@ function SignUpView(props) {
     setCities(states);
   };
 
-  const { loading: loadingCheck, error, data } = useQuery(
-    emailInvitationCheckGQL,
-    {
-      onCompleted: (e) => {
-        setInvitationChecked(!isEmpty(e.emailInvitationCheck));
-      },
-      onError: (e) => {
-        console.log(e.graphQLErrors);
-        AlertMessage("Error", <span>Error During Process!</span>, "error");
-      },
-      variables: {
-        hash: token,
-      },
-    }
-  );
+  const { loading: loadingCheck } = useQuery(emailInvitationCheckGQL, {
+    onCompleted: (e) => {
+      const resp = e.emailInvitationCheck;
+      setInvitationChecked(!isEmpty(resp));
+      updateValues({
+        ...defaultValues,
+        email: resp.email,
+        role: resp.roleId,
+        invitation: resp.id,
+      });
+      setRoleInputValue(resp.invitation);
+    },
+    onError: (e) => {
+      AlertMessage("Error", <span>Error During Process!</span>, "error");
+    },
+    variables: {
+      hash: token,
+    },
+  });
 
-  const [executeCreate, { loading }] = useMutation(createUserGQL, {
+  const [executeCreate, { loading }] = useMutation(signUpGQL, {
     onCompleted: (e) => {
       AlertMessage(
         "Completed!",
         <span>Account Created Successfully!</span>,
         "success"
       );
+      setTimeout(() => {
+        history.push("/auth/login");
+      });
     },
     onError: (e) => {
       console.log(e);
@@ -123,6 +131,7 @@ function SignUpView(props) {
     password: "",
     password_confirmation: "",
     role: "",
+    invitation: null,
   };
   const submitForm = async () => {
     const sbm = {
@@ -135,6 +144,7 @@ function SignUpView(props) {
       phone_number: values.phone_number,
       password: values.password,
       roles: [values.role],
+      invitation: values.invitation,
     };
     executeCreate({
       variables: {
@@ -152,14 +162,9 @@ function SignUpView(props) {
     updateSchema,
   } = useForm(submitForm, defaultValues, RegisterSchema);
 
-  useEffect(() => {
-    // checkInvitation();
-    console.log("HOLA");
-  }, []);
-
   return (
     <div className="signup" style={{ backgroundColor: "#126270" }}>
-      {!invitationChecked ? (
+      {!loadingCheck && !invitationChecked ? (
         <InvitationError />
       ) : (
         <Modal
@@ -173,7 +178,7 @@ function SignUpView(props) {
             </span>
           }
           visible={true}
-          onOk={() => {}}
+          onOk={() => handleSubmit()}
           onCancel={() => history.push("auth/login")}
           cancelText="Go To Login!"
         >
@@ -284,7 +289,7 @@ function SignUpView(props) {
                       name="role"
                       autoComplete={"false"}
                       onBlur={handleBlur}
-                      value={"Administrator"}
+                      value={roleInputValue}
                       onChange={handleChange}
                     />
                   </Form.Item>

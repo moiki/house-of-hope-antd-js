@@ -137,6 +137,11 @@ export const EditUserSchema = {
     "any.required": "Role is required",
     "string.empty": "Role is required",
   }),
+  invitation: Joi.string().optional().allow(null, "").label("role").messages({
+    "string.base": "Role is required",
+    "any.required": "Role is required",
+    "string.empty": "Role is required",
+  }),
   ProfilePicture: Joi.any()
     .meta({ swaggerType: "file" })
     .optional()
