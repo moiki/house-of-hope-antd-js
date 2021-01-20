@@ -61,7 +61,6 @@ const InvitationError = () => {
 
 function SignUpView(props) {
   const countryList = csc.getAllCountries();
-  const client = useApolloClient();
   const [roleInputValue, setRoleInputValue] = useState("");
   const [invitationChecked, setInvitationChecked] = useState(false);
   const [states, setStates] = useState([]);
@@ -88,10 +87,10 @@ function SignUpView(props) {
       updateValues({
         ...defaultValues,
         email: resp.email,
-        role: resp.roleId,
+        role: resp.role_id,
         invitation: resp.id,
       });
-      setRoleInputValue(resp.invitation);
+      setRoleInputValue(resp.role_name);
     },
     onError: (e) => {
       AlertMessage("Error", <span>Error During Process!</span>, "error");
@@ -110,7 +109,7 @@ function SignUpView(props) {
       );
       setTimeout(() => {
         history.push("/auth/login");
-      });
+      }, 3000);
     },
     onError: (e) => {
       console.log(e);
@@ -141,11 +140,15 @@ function SignUpView(props) {
       email: values.email,
       profession: values.profession,
       address: values.address,
+      country: values.country,
+      state: values.state,
+      city: values.city,
       phone_number: values.phone_number,
       password: values.password,
       roles: [values.role],
       invitation: values.invitation,
     };
+    debugger;
     executeCreate({
       variables: {
         ...sbm,
@@ -159,7 +162,6 @@ function SignUpView(props) {
     handleSubmit,
     handleBlur,
     updateValues,
-    updateSchema,
   } = useForm(submitForm, defaultValues, RegisterSchema);
 
   return (

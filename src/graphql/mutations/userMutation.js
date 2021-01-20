@@ -34,7 +34,7 @@ export const createUserGQL = gql`
 `;
 
 export const signUpGQL = gql`
-  mutation signUp(
+  mutation signup(
     $first_name: String!
     $last_name: String!
     $email: String!
@@ -48,7 +48,7 @@ export const signUpGQL = gql`
     $roles: [String!]!
     $invitation: String!
   ) {
-    signUp(
+    signup(
       first_name: $first_name
       last_name: $last_name
       email: $email

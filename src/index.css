@@ -22,7 +22,8 @@ body {
   background-color: #fff !important;
   color: #084954 !important;
 }
-.ant-btn-primary {
+.ant-btn-primary,
+.ant-select-item-option-active {
   background-color: #126270 !important;
   color: #fff;
 }

@@ -74,6 +74,8 @@ export const RegisterSchema = {
     "any.required": "Role is required",
     "string.empty": "Role is required",
   }),
+  invitation: Joi.string().allow(null).label("invitation").optional(),
+
   ProfilePicture: Joi.any()
     .meta({ swaggerType: "file" })
     .optional()
@@ -133,11 +135,6 @@ export const EditUserSchema = {
     "string.empty": "Address Is Required",
   }),
   role: Joi.string().optional().label("role").messages({
-    "string.base": "Role is required",
-    "any.required": "Role is required",
-    "string.empty": "Role is required",
-  }),
-  invitation: Joi.string().optional().allow(null, "").label("role").messages({
     "string.base": "Role is required",
     "any.required": "Role is required",
     "string.empty": "Role is required",

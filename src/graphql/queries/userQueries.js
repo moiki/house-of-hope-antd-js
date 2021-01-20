@@ -62,7 +62,7 @@ export const emailInvitationCheckGQL = gql`
       id
       email
       role_id
-      invitation
+      role_name
     }
   }
 `;
