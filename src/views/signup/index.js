@@ -32,7 +32,13 @@ import { BeatLoader } from "react-spinners";
 import { isEmpty } from "lodash";
 const { Option } = Select;
 
-const InvitationError = () => {
+const InvitationError = (props) => {
+  const message = {
+    failed:
+      "Your invitation may be invalid or expired. Please contact to House Of Hope administrator for request a new invitation link",
+    accepted:
+      "This invitation link is already accepted and not available anymore.",
+  };
   return (
     <Modal
       maskClosable={false}
@@ -51,9 +57,9 @@ const InvitationError = () => {
       okText="Go To Login!"
     >
       <Alert
-        message="Your invitation may be invalid or expired. Please contact to House Of Hope administrator for request a new invitation link"
+        message={props.type === "error" ? message.failed : message.accepted}
         banner
-        type="error"
+        type={props.type || "error"}
       />
     </Modal>
   );
@@ -62,7 +68,10 @@ const InvitationError = () => {
 function SignUpView(props) {
   const countryList = csc.getAllCountries();
   const [roleInputValue, setRoleInputValue] = useState("");
-  const [invitationChecked, setInvitationChecked] = useState(false);
+  const [invitationChecked, setInvitationChecked] = useState({
+    status: false,
+    type: "error",
+  });
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const history = useHistory();
@@ -83,14 +92,25 @@ function SignUpView(props) {
   const { loading: loadingCheck } = useQuery(emailInvitationCheckGQL, {
     onCompleted: (e) => {
       const resp = e.emailInvitationCheck;
-      setInvitationChecked(!isEmpty(resp));
-      updateValues({
-        ...defaultValues,
-        email: resp.email,
-        role: resp.role_id,
-        invitation: resp.id,
-      });
-      setRoleInputValue(resp.role_name);
+      debugger;
+      if (resp.accepted) {
+        setInvitationChecked({
+          status: false,
+          type: "success",
+        });
+      } else {
+        setInvitationChecked({
+          status: !isEmpty(resp),
+          type: "success",
+        });
+        updateValues({
+          ...defaultValues,
+          email: resp.email,
+          role: resp.role_id,
+          invitation: resp.id,
+        });
+        setRoleInputValue(resp.role_name);
+      }
     },
     onError: (e) => {
       AlertMessage("Error", <span>Error During Process!</span>, "error");
@@ -166,8 +186,8 @@ function SignUpView(props) {
 
   return (
     <div className="signup" style={{ backgroundColor: "#126270" }}>
-      {!loadingCheck && !invitationChecked ? (
-        <InvitationError />
+      {!loadingCheck && invitationChecked.status === false ? (
+        <InvitationError type={invitationChecked.type} />
       ) : (
         <Modal
           maskClosable={false}

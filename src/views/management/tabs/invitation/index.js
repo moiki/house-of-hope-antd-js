@@ -150,7 +150,7 @@ export default function InvitationList(props) {
       title: "Action",
       dataIndex: "id",
       key: "id",
-      render: (text) => (
+      render: (text, record) => (
         <Space size="middle">
           <Popconfirm
             placement="top"
@@ -158,10 +158,13 @@ export default function InvitationList(props) {
             onConfirm={() => handleResend(text)}
             okText="Yes"
             cancelText="No"
+            disabled={record.answered === "ACCEPTED" ? true : false}
           >
             <Button
               icon={<MailOutlined />}
-              className="ant-btn-info"
+              className={
+                record.answered === "ACCEPTED" ? "default" : "ant-btn-info"
+              }
               shape="round"
             >
               Resend Invitation

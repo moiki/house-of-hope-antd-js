@@ -67,27 +67,19 @@ const LoadingScreen = (props) => {
   };
 
   return (
-    <Row className="center" justify="center" style={{ minHeight: "100vh" }}>
+    <Row className="center" justify="center">
       <Col span={24}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-around",
-            flexDirection: "column",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <ScaleLoader sizeUnit="px" size={70} color="green" loading />
-          </div>
-          <div>
+        <div>
+          <div className="screen-loading">
+            <ScaleLoader style={{ textAlign: "center" }} color="#fff" loading />
             <h5
               variant="h1"
-              style={{ fontSize: "1.75rem", display: "flex", paddingLeft: 14 }}
+              style={{
+                fontSize: "1.75rem",
+                display: "flex",
+                marginLeft: "-34px",
+                color: "#fff",
+              }}
             >
               Loading...
             </h5>

@@ -204,6 +204,13 @@ code {
   transition: ease-in-out;
 }
 
+.screen-loading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
+}
 @media (min-width: 1400px) and (max-width: 1950px) {
   .pic-banner-container {
     background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),

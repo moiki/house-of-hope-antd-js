@@ -63,6 +63,7 @@ export const emailInvitationCheckGQL = gql`
       email
       role_id
       role_name
+      accepted
     }
   }
 `;
