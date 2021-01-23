@@ -12,7 +12,7 @@ import {
   Modal,
   Form,
   Input,
-  AutoComplete,
+  List,
   Spin,
 } from "antd";
 import { AccountStore } from "views/management";
@@ -21,6 +21,7 @@ import { BeatLoader } from "react-spinners";
 import ModalForm from "components/modalForm";
 import { createInvitationGQL } from "graphql/mutations/userMutation";
 import Joi from "@hapi/joi";
+import { GraphError } from "components/MyAlert/GraphQlError";
 const { Option } = Select;
 
 export default function InvitationCU(props) {
@@ -60,8 +61,7 @@ export default function InvitationCU(props) {
       handleCloseModal();
     },
     onError: (e) => {
-      console.log(e);
-      AlertMessage("Error", <span>Error During Process!</span>, "error");
+      GraphError(e);
     },
   });
 

@@ -26,6 +26,7 @@ export const updateClinicGQL = gql`
     $id: String!
     $name: String!
     $description: String!
+    $state: String!
     $phone_number: String!
     $address: String!
     $city: String!
@@ -34,6 +35,7 @@ export const updateClinicGQL = gql`
       id: $id
       name: $name
       description: $description
+      state: $state
       phone_number: $phone_number
       address: $address
       city: $city

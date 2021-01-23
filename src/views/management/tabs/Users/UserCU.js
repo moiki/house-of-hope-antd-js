@@ -13,6 +13,7 @@ import { getUserGQL } from "graphql/queries/userQueries";
 import { BeatLoader } from "react-spinners";
 import ModalForm from "components/modalForm";
 import csc from "country-state-city";
+import { GraphError } from "components/MyAlert/GraphQlError";
 const { Option } = Select;
 
 export const PasswordRules = () => {
@@ -69,7 +70,7 @@ export default function UserCU(props) {
     },
     onError: (e) => {
       handleCloseModal();
-      AlertMessage("Error", <span>Error Fetching Account Data!</span>, "error");
+      GraphError(e);
     },
   });
 
@@ -84,8 +85,7 @@ export default function UserCU(props) {
       handleCloseModal();
     },
     onError: (e) => {
-      console.log(e);
-      AlertMessage("Error", <span>Error During Process!</span>, "error");
+      GraphError(e);
     },
   });
 
@@ -100,8 +100,7 @@ export default function UserCU(props) {
       handleCloseModal();
     },
     onError: (e) => {
-      console.log(e);
-      AlertMessage("Error", <span>Error During Process!</span>, "error");
+      GraphError(e);
     },
   });
 

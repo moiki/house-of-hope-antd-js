@@ -13,6 +13,7 @@ import { DeleteOutlined, EditOutlined, MailOutlined } from "@ant-design/icons";
 import randomIdForRow from "utils/TableKeygen";
 import InvitationCU from "./InvitationCU";
 import { isExpired } from "react-jwt";
+import { GraphError } from "components/MyAlert/GraphQlError";
 
 export default function InvitationList(props) {
   const [idInvitation, setIdInvitation] = useState(null);
@@ -38,19 +39,7 @@ export default function InvitationList(props) {
         setLocalData(result);
       },
       onError: (e) => {
-        AlertMessage(
-          "Error",
-          <p>
-            <ul>
-              {e.graphQLErrors.length > 0 ? (
-                e.graphQLErrors.map((v, i) => <li key={i}>{v.message}</li>)
-              ) : (
-                <p>{e.message}</p>
-              )}
-            </ul>
-          </p>,
-          "error"
-        );
+        GraphError(e);
       },
     }
   );
@@ -79,20 +68,8 @@ export default function InvitationList(props) {
         );
       },
       onError: (e) => {
-        console.log({ e });
-        AlertMessage(
-          "Error",
-          <p>
-            <ul>
-              {e.graphQLErrors.length > 0 ? (
-                e.graphQLErrors.map((v, i) => <li key={i}>{v.message}</li>)
-              ) : (
-                <p>{e.message}</p>
-              )}
-            </ul>
-          </p>,
-          "error"
-        );
+        // console.log({ e });
+        GraphError(e);
       },
     }
   );

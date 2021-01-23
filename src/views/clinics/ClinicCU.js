@@ -15,6 +15,7 @@ import useForm from "utils/useForm/UseForm";
 import csc from "country-state-city";
 import { departments } from "utils/NationalCitiesHandler";
 import { comunities } from "utils/NationalCitiesHandler";
+import { GraphError } from "components/MyAlert/GraphQlError";
 const { Option } = Select;
 
 export default function ClinicCU(props) {
@@ -31,6 +32,7 @@ export default function ClinicCU(props) {
   const [fetchClinic, { loading: loadingFetch }] = useLazyQuery(getClinicGQL, {
     onCompleted: (e) => {
       const res = e.result;
+      // debugger;
       updateValues({
         id: res.id,
         name: res.name,
@@ -44,7 +46,7 @@ export default function ClinicCU(props) {
     },
     onError: (e) => {
       handleCloseModal();
-      AlertMessage("Error", <span>Error Fetching Account Data!</span>, "error");
+      GraphError(e);
     },
   });
   const [executeCreate, { loading }] = useMutation(createClinicGQL, {
@@ -58,8 +60,7 @@ export default function ClinicCU(props) {
       handleCloseModal();
     },
     onError: (e) => {
-      console.log(e);
-      AlertMessage("Error", <span>Error During Process!</span>, "error");
+      GraphError(e);
     },
   });
 
@@ -76,8 +77,19 @@ export default function ClinicCU(props) {
         handleCloseModal();
       },
       onError: (e) => {
-        console.log(e);
-        AlertMessage("Error", <span>Error During Process!</span>, "error");
+        AlertMessage(
+          "Error",
+          <p>
+            <ul>
+              {e.graphQLErrors.length > 0 ? (
+                e.graphQLErrors.map((v, i) => <li key={i}>{v.message}</li>)
+              ) : (
+                <p>{e.message}</p>
+              )}
+            </ul>
+          </p>,
+          "error"
+        );
       },
     }
   );

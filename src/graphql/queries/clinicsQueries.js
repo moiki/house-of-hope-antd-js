@@ -35,6 +35,7 @@ export const getClinicGQL = gql`
       description
       address
       city
+      state
       phone
       employees
       pacients
