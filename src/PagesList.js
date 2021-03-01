@@ -1,4 +1,5 @@
 import ClinicsView from "views/clinics";
+import ClinicDetails from "views/clinics/ClinicDetails.";
 import ClinicManager from "views/clinics/ClinicManager";
 import Home from "views/home";
 import ManagementView from "views/management";
@@ -120,6 +121,20 @@ const MainPagesList = [
     icon: null,
     layout: "admin",
     component: ClinicsView,
+    allowedRoles: [
+      "Root",
+      "Administrator",
+      "Local Member",
+      "Support Doctor",
+      "Sponsor",
+    ],
+  },
+  {
+    title: "Clinic Details",
+    path: "clinics/details/:id",
+    icon: null,
+    layout: "admin",
+    component: ClinicDetails,
     allowedRoles: [
       "Root",
       "Administrator",

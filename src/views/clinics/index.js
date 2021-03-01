@@ -5,9 +5,11 @@ import { useLazyQuery } from "@apollo/react-hooks";
 import { clinicsReviewGQL } from "graphql/queries/clinicsQueries";
 import AlertMessage from "components/MyAlert/Alert";
 import { ScaleLoader } from "react-spinners";
+import { useHistory } from "react-router-dom";
 
 export default function ClinicsView() {
   const [clinicsState, setClinicsState] = useState([]);
+  const hist = useHistory();
   const [refetchClinic, { loading }] = useLazyQuery(clinicsReviewGQL, {
     onCompleted: (e) => {
       setClinicsState(e.result);
@@ -42,12 +44,14 @@ export default function ClinicsView() {
         <>
           {clinicsState.map((v, i) => {
             return (
-              <ClinicCard
-                key={i}
-                img={v.image}
-                title={v.name}
-                description={v.description}
-              />
+              <div onClick={() => hist.push("/admin/clinics/details/" + i)}>
+                <ClinicCard
+                  key={i}
+                  img={v.image}
+                  title={v.name}
+                  description={v.description}
+                />
+              </div>
             );
           })}
         </>
