@@ -9,7 +9,7 @@ import { ApolloProvider } from "@apollo/react-hooks";
 import AuthLayout from "layout/auth/AuthLayout";
 import Login from "views/auth/Login";
 import SignUpView from "views/signup";
-
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 export const MainStore = createContext();
 export const hist = createBrowserHistory();
 

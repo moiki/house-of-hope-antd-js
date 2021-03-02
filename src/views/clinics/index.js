@@ -44,7 +44,10 @@ export default function ClinicsView() {
         <>
           {clinicsState.map((v, i) => {
             return (
-              <div onClick={() => hist.push("/admin/clinics/details/" + i)}>
+              <div
+                key={i}
+                onClick={() => hist.push("/admin/clinics/details/" + v.id)}
+              >
                 <ClinicCard
                   key={i}
                   img={v.image}
