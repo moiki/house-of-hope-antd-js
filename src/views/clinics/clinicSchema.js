@@ -7,11 +7,11 @@ export const clinicSchema = {
     "any.required": "Name Of Clinic Is Required",
     "string.empty": "Name Of Clinic Is Required",
   }),
-  description: Joi.string().required().messages({
-    "string.base": "Description Is Required",
-    "any.required": "Description Is Required",
-    "string.empty": "Description Is Required",
-  }),
+  // description: Joi.string().optional().messages({
+  //   "string.base": "Description Is Required",
+  //   "any.required": "Description Is Required",
+  //   "string.empty": "Description Is Required",
+  // }),
   country: Joi.string().required().messages({
     "string.base": "Country Is Required",
     "any.required": "Country Is Required",

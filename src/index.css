@@ -244,3 +244,21 @@ code {
     gap: 1rem;
   }
 }
+
+.rdw-colorpicker-modal {
+  z-index: 1000000 !important;
+}
+
+.wrapper-class {
+  padding: 0.4rem;
+  border: 1px solid #ccc;
+}
+.editor-class {
+  background-color: rgb(255, 255, 255);
+  padding: 0.5rem;
+  padding-top: 1px;
+  border: 1px solid #ccc;
+}
+.toolbar-class {
+  border: 1px solid #ccc;
+}

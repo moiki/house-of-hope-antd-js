@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BeatLoader } from "react-spinners";
 import ModalForm from "components/modalForm";
-import { Tooltip, Select, Row, Col, Form, Input, Spin } from "antd";
+import { Tabs, Select, Row, Col, Form, Input, Spin } from "antd";
 import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import AlertMessage from "components/MyAlert/Alert";
 import {
@@ -16,13 +16,21 @@ import csc from "country-state-city";
 import { departments } from "utils/NationalCitiesHandler";
 import { comunities } from "utils/NationalCitiesHandler";
 import { GraphError } from "components/MyAlert/GraphQlError";
+import { EditorState } from "draft-js";
+import { Editor } from "react-draft-wysiwyg";
+import { convertToHTML, convertFromHTML } from "draft-convert";
+
 const { Option } = Select;
+const { TabPane } = Tabs;
 
 export default function ClinicCU(props) {
   const { openModal, handleCloseModal, idClinic, refetchClinics } = props;
   const countryList = csc.getAllCountries();
   const states = departments();
   const [cities, setCities] = useState([]);
+  const [editorState, setEditorState] = useState(() =>
+    EditorState.createEmpty()
+  );
 
   const handleState = (e) => {
     const states = comunities(e);
@@ -32,11 +40,14 @@ export default function ClinicCU(props) {
   const [fetchClinic, { loading: loadingFetch }] = useLazyQuery(getClinicGQL, {
     onCompleted: (e) => {
       const res = e.result;
+      setEditorState(
+        EditorState.createWithContent(convertFromHTML(res.description))
+      );
       // debugger;
       updateValues({
         id: res.id,
         name: res.name,
-        description: res.description,
+        // description: res.description,
         country: res.country || "Nicaragua",
         state: res.state,
         city: res.city,
@@ -97,7 +108,7 @@ export default function ClinicCU(props) {
   const defaultValues = {
     id: null,
     name: "",
-    description: "",
+    // description: "",
     address: "",
     country: "Nicaragua",
     state: "",
@@ -105,10 +116,12 @@ export default function ClinicCU(props) {
     city: "",
   };
   const submitForm = async () => {
+    const descHtml = convertToHTML(editorState.getCurrentContent());
+    console.log(descHtml);
     const sbm = {
       id: idClinic,
       name: values.name,
-      description: values.description,
+      description: descHtml,
       country: values.country,
       state: values.state,
       city: values.city,
@@ -129,6 +142,11 @@ export default function ClinicCU(props) {
       });
     }
   };
+
+  const onchangeDescription = (value) => {
+    setEditorState(value);
+  };
+
   const {
     values,
     errors,
@@ -175,153 +193,162 @@ export default function ClinicCU(props) {
           name="form_in_modal"
           initialValues={{ modifier: "public" }}
         >
-          <Row gutter={[10]}>
-            <Col span={12}>
-              <Form.Item
-                validateStatus={errors.name ? "error" : "validating"}
-                help={errors.name}
-                label="Name of Clinic"
-              >
-                <Input
-                  id="name"
-                  name="name"
-                  autoComplete={"false"}
-                  onBlur={handleBlur}
-                  value={values.name}
-                  onChange={handleChange}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                validateStatus={errors.phone_number ? "error" : "validating"}
-                help={errors.phone_number}
-                label="Phone Number"
-              >
-                <Input
-                  id="phone_number"
-                  name="phone_number"
-                  autoComplete={"false"}
-                  onBlur={handleBlur}
-                  value={values.phone_number}
-                  onChange={handleChange}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={[10]}>
-            <Col span={12}>
-              <Form.Item
-                validateStatus={errors.country ? "error" : "validating"}
-                help={errors.country}
-                label="country"
-              >
-                <Input
-                  disabled
-                  id="country"
-                  name="country"
-                  autoComplete={"false"}
-                  onBlur={handleBlur}
-                  value={values.country || "Nicaragua"}
-                  onChange={handleChange}
-                />
-              </Form.Item>
-            </Col>{" "}
-            <Col span={12}>
-              <Form.Item
-                validateStatus={errors.state ? "error" : "validating"}
-                help={errors.state}
-                label="State/Dept"
-              >
-                <Select
-                  showSearch
-                  id="state"
-                  name="state"
-                  autoComplete={"false"}
-                  onBlur={handleBlur}
-                  value={values.state}
-                  onChange={(value) => {
-                    handleState(value);
-                  }}
-                  filterOption={(input, option) =>
-                    option.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  {states &&
-                    states.map((v, i) => (
-                      <Option key={v.i} value={v.value}>
-                        {v.value}
-                      </Option>
-                    ))}
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={[10]}>
-            <Col span={12}>
-              <Form.Item
-                validateStatus={errors.city ? "error" : "validating"}
-                help={errors.city}
-                label="Town/Comunity"
-              >
-                <Select
-                  showSearch
-                  id="city"
-                  name="city"
-                  autoComplete={"false"}
-                  onBlur={handleBlur}
-                  value={values.city}
-                  onChange={(value) => {
-                    handleChange(value, "city");
-                  }}
-                  filterOption={(input, option) =>
-                    option.children
-                      .toLowerCase()
-                      .indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  {cities &&
-                    cities.map((v, i) => (
-                      <Option key={v.i} value={v.value}>
-                        {v.value}
-                      </Option>
-                    ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                validateStatus={errors.address ? "error" : "validating"}
-                help={errors.address}
-                label="Address"
-              >
-                <Input
-                  id="address"
-                  name="address"
-                  autoComplete={"false"}
-                  onBlur={handleBlur}
-                  value={values.address}
-                  onChange={handleChange}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Form.Item
-            validateStatus={errors.description ? "error" : "validating"}
-            help={errors.description}
-            label={<span>Description</span>}
-          >
-            <Input.TextArea
-              id="description"
-              name="description"
-              autoComplete={"false"}
-              onBlur={handleBlur}
-              value={values.description}
-              onChange={handleChange}
-            />
-          </Form.Item>
+          <Tabs size="large" style={{ marginBottom: 32 }}>
+            <TabPane tab="General" key="1">
+              <Row gutter={[10]}>
+                <Col span={12}>
+                  <Form.Item
+                    validateStatus={errors.name ? "error" : "validating"}
+                    help={errors.name}
+                    label="Name of Clinic"
+                  >
+                    <Input
+                      id="name"
+                      name="name"
+                      autoComplete={"false"}
+                      onBlur={handleBlur}
+                      value={values.name}
+                      onChange={handleChange}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    validateStatus={
+                      errors.phone_number ? "error" : "validating"
+                    }
+                    help={errors.phone_number}
+                    label="Phone Number"
+                  >
+                    <Input
+                      id="phone_number"
+                      name="phone_number"
+                      autoComplete={"false"}
+                      onBlur={handleBlur}
+                      value={values.phone_number}
+                      onChange={handleChange}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={[10]}>
+                <Col span={12}>
+                  <Form.Item
+                    validateStatus={errors.country ? "error" : "validating"}
+                    help={errors.country}
+                    label="country"
+                  >
+                    <Input
+                      disabled
+                      id="country"
+                      name="country"
+                      autoComplete={"false"}
+                      onBlur={handleBlur}
+                      value={values.country || "Nicaragua"}
+                      onChange={handleChange}
+                    />
+                  </Form.Item>
+                </Col>{" "}
+                <Col span={12}>
+                  <Form.Item
+                    validateStatus={errors.state ? "error" : "validating"}
+                    help={errors.state}
+                    label="State/Dept"
+                  >
+                    <Select
+                      showSearch
+                      id="state"
+                      name="state"
+                      autoComplete={"false"}
+                      onBlur={handleBlur}
+                      value={values.state}
+                      onChange={(value) => {
+                        handleState(value);
+                      }}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      {states &&
+                        states.map((v, i) => (
+                          <Option key={v.i} value={v.value}>
+                            {v.value}
+                          </Option>
+                        ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={[10]}>
+                <Col span={12}>
+                  <Form.Item
+                    validateStatus={errors.city ? "error" : "validating"}
+                    help={errors.city}
+                    label="Town/Comunity"
+                  >
+                    <Select
+                      showSearch
+                      id="city"
+                      name="city"
+                      autoComplete={"false"}
+                      onBlur={handleBlur}
+                      value={values.city}
+                      onChange={(value) => {
+                        handleChange(value, "city");
+                      }}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      {cities &&
+                        cities.map((v, i) => (
+                          <Option key={v.i} value={v.value}>
+                            {v.value}
+                          </Option>
+                        ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    validateStatus={errors.address ? "error" : "validating"}
+                    help={errors.address}
+                    label="Address"
+                  >
+                    <Input
+                      id="address"
+                      name="address"
+                      autoComplete={"false"}
+                      onBlur={handleBlur}
+                      value={values.address}
+                      onChange={handleChange}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </TabPane>
+            <TabPane tab="Description" key="2">
+              <Editor
+                editorState={editorState}
+                editorStyle={{ width: "100%", height: "30vh" }}
+                wrapperClassName="wrapper-class"
+                editorClassName="editor-class"
+                toolbarClassName="toolbar-class"
+                toolbar={{
+                  inline: { inDropdown: true },
+                  list: { inDropdown: true },
+                  textAlign: { inDropdown: true },
+                  link: { inDropdown: true },
+                  history: { inDropdown: true },
+                }}
+                onEditorStateChange={onchangeDescription}
+              />
+            </TabPane>
+          </Tabs>
         </Form>
       </Spin>
     </ModalForm>

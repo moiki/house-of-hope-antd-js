@@ -46,7 +46,7 @@ export default function ClinicDetails(props) {
     <div style={{ color: "black" }}>
       <Title>{clinic.name}</Title>
       <p>Registered on {moment(clinic.created_date).format("MMM Do YYYY")}</p>
-      <div>{clinic.description}</div>
+      <div dangerouslySetInnerHTML={{ __html: clinic.description }}></div>
     </div>
   );
 }

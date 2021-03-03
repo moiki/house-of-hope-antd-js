@@ -52,7 +52,7 @@ export default function ClinicsView() {
                   key={i}
                   img={v.image}
                   title={v.name}
-                  description={v.description}
+                  description={""}
                 />
               </div>
             );
