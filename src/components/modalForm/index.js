@@ -10,6 +10,7 @@ export default function ModalForm({
   children,
   openModal,
   okText,
+  width,
 }) {
   return (
     <Modal
@@ -20,6 +21,7 @@ export default function ModalForm({
       confirmLoading={loading}
       title={title}
       okText={okText}
+      width={width ? width : 520}
       cancelText="Cancel"
       style={{ top: 20 }}
       onCancel={handleClose}

@@ -1,5 +1,7 @@
 import gql from "graphql-tag";
 
+// Here wi will include employees queries
+
 export const clinicsReviewGQL = gql`
   query clinicsReview {
     result: clinicsReview {

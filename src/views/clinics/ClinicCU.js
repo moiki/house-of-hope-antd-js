@@ -19,6 +19,11 @@ import { GraphError } from "components/MyAlert/GraphQlError";
 import { EditorState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import { convertToHTML, convertFromHTML } from "draft-convert";
+import {
+  FileTextOutlined,
+  MenuOutlined,
+  UsergroupAddOutlined,
+} from "@ant-design/icons";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -117,7 +122,6 @@ export default function ClinicCU(props) {
   };
   const submitForm = async () => {
     const descHtml = convertToHTML(editorState.getCurrentContent());
-    console.log(descHtml);
     const sbm = {
       id: idClinic,
       name: values.name,
@@ -168,6 +172,7 @@ export default function ClinicCU(props) {
   return (
     <ModalForm
       openModal={openModal}
+      width={600}
       loading={loading || LoadingEdit}
       title={
         <span style={{ display: "flex", alignItems: "center" }}>
@@ -194,7 +199,15 @@ export default function ClinicCU(props) {
           initialValues={{ modifier: "public" }}
         >
           <Tabs size="large" style={{ marginBottom: 32 }}>
-            <TabPane tab="General" key="1">
+            <TabPane
+              tab={
+                <span>
+                  <MenuOutlined />
+                  General
+                </span>
+              }
+              key="1"
+            >
               <Row gutter={[10]}>
                 <Col span={12}>
                   <Form.Item
@@ -273,7 +286,7 @@ export default function ClinicCU(props) {
                     >
                       {states &&
                         states.map((v, i) => (
-                          <Option key={v.i} value={v.value}>
+                          <Option key={i} value={v.value}>
                             {v.value}
                           </Option>
                         ))}
@@ -306,7 +319,7 @@ export default function ClinicCU(props) {
                     >
                       {cities &&
                         cities.map((v, i) => (
-                          <Option key={v.i} value={v.value}>
+                          <Option key={i} value={v.value}>
                             {v.value}
                           </Option>
                         ))}
@@ -331,10 +344,22 @@ export default function ClinicCU(props) {
                 </Col>
               </Row>
             </TabPane>
-            <TabPane tab="Description" key="2">
+            <TabPane
+              tab={
+                <span>
+                  <FileTextOutlined />
+                  Description
+                </span>
+              }
+              key="2"
+            >
               <Editor
                 editorState={editorState}
-                editorStyle={{ width: "100%", height: "30vh" }}
+                editorStyle={{
+                  width: "100%",
+                  height: "30vh",
+                  overflow: "hidden",
+                }}
                 wrapperClassName="wrapper-class"
                 editorClassName="editor-class"
                 toolbarClassName="toolbar-class"
@@ -348,6 +373,15 @@ export default function ClinicCU(props) {
                 onEditorStateChange={onchangeDescription}
               />
             </TabPane>
+            <TabPane
+              tab={
+                <span>
+                  <UsergroupAddOutlined />
+                  Employees
+                </span>
+              }
+              key="3"
+            ></TabPane>
           </Tabs>
         </Form>
       </Spin>

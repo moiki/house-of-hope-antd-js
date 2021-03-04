@@ -124,8 +124,15 @@ const routes = [
         ],
       },
       {
-        title: "Clinics Manager",
+        title: "Clinics",
         path: "clinics/manage",
+        icon: "build",
+        layout: "admin",
+        allowedRoles: ["Root", "Administrator"],
+      },
+      {
+        title: "Employees",
+        path: "clinics/employees",
         icon: "build",
         layout: "admin",
         allowedRoles: ["Root", "Administrator"],
