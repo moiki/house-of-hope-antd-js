@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Table } from "antd";
 import moment from "moment";
@@ -9,23 +9,28 @@ import { deleteClinicGQL } from "graphql/mutations/clinicsMutation";
 import ClinicCU from "./ClinicCU";
 import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import AlertMessage from "components/MyAlert/Alert";
+import EmployeeCU from "./EmployeeCU";
+import { employeesListGQL } from "graphql/queries/clinicsQueries";
+import { deleteEmployeeGQL } from "graphql/mutations/clinicsMutation";
+import { MainStore } from "App";
 
 export default function EmployeesManager() {
+  const { state } = useContext(MainStore);
   const [loaded, setLoaded] = useState(false);
-  const [idClinic, setIdClinic] = useState(null);
+  const [idEmployee, setIdEmployee] = useState(null);
   const { setRef, visible } = useScreenObserverHook();
   const [localData, setLocalData] = useState([]);
-  const [modalClinicState, setModalClinicState] = useState(false);
-  const handleModalClinic = () => setModalClinicState(!modalClinicState);
+  const [modalEmployeeState, setModalEmployeeState] = useState(false);
+  const handleModalEmployee = () => setModalEmployeeState(!modalEmployeeState);
 
   const handleClickClose = () => {
-    handleModalClinic();
-    if (idClinic) {
-      setIdClinic(null);
+    handleModalEmployee();
+    if (idEmployee) {
+      setIdEmployee(null);
     }
   };
 
-  const [refetchClinic, { loadingFetch }] = useLazyQuery(clinicListGQL, {
+  const [refetchEmployees, { loadingFetch }] = useLazyQuery(employeesListGQL, {
     onCompleted: (e) => {
       setLocalData(e.result);
     },
@@ -46,10 +51,10 @@ export default function EmployeesManager() {
     },
   });
 
-  const [executeDelete, { loadingDelete }] = useMutation(deleteClinicGQL, {
+  const [executeDelete, { loadingDelete }] = useMutation(deleteEmployeeGQL, {
     onCompleted: () => {
-      refetchClinic();
-      AlertMessage("Completed!", <span>Account Deleted!</span>, "success");
+      refetchEmployees();
+      AlertMessage("Completed!", <span>Employee Deleted!</span>, "success");
     },
     onError: (e) => {
       console.log(e);
@@ -58,8 +63,8 @@ export default function EmployeesManager() {
   });
 
   const handleEdit = (e) => {
-    setIdClinic(e);
-    handleModalClinic();
+    setIdEmployee(e);
+    handleModalEmployee();
   };
   const handleDelete = (e) => {
     if (e) {
@@ -129,7 +134,7 @@ export default function EmployeesManager() {
 
   useEffect(() => {
     if (visible && !loaded) {
-      refetchClinic();
+      refetchEmployees();
       setLoaded(true);
     }
   }, [visible]);
@@ -139,7 +144,7 @@ export default function EmployeesManager() {
       <Button
         type="primary"
         shape="round"
-        onClick={handleModalClinic}
+        onClick={handleModalEmployee}
         icon={<PlusOutlined />}
       >
         Add New Employee
@@ -151,12 +156,12 @@ export default function EmployeesManager() {
         dataSource={localData}
         rowKey={() => randomIdForRow()}
       />
-      {modalClinicState && (
-        <ClinicCU
-          idClinic={idClinic}
-          refetchClinics={refetchClinic}
+      {modalEmployeeState && (
+        <EmployeeCU
+          idEmployee={idEmployee}
+          refetchEmployeess={refetchEmployees}
           handleCloseModal={handleClickClose}
-          openModal={modalClinicState}
+          openModal={modalEmployeeState}
         />
       )}
     </div>

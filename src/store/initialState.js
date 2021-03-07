@@ -8,6 +8,7 @@ const initialState = {
     profession: null,
     phoneNumber: null,
   },
+  clinics: [],
   history: null,
   globalAlert: {},
 };

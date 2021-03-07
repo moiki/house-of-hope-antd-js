@@ -29,6 +29,30 @@ export const clinicListGQL = gql`
   }
 `;
 
+export const employeesListGQL = gql`
+  query employeesList {
+    result: employeesList {
+      id
+      name
+      clinic
+      address
+      email
+      birth_date
+      workRoutes
+    }
+  }
+`;
+
+export const positionsGQL = gql`
+  query positions {
+    result: positions {
+      id
+      name
+      description
+    }
+  }
+`;
+
 export const getClinicGQL = gql`
   query getClinic($id: String!) {
     result: getClinic(id: $id) {
@@ -41,6 +65,23 @@ export const getClinicGQL = gql`
       phone
       employees
       pacients
+      workRoutes
+    }
+  }
+`;
+
+export const getEmployeeGQL = gql`
+  query getEmployee($id: String!) {
+    result: getEmployee(id: $id) {
+      first_name
+      last_name
+      address
+      country
+      state
+      city
+      phoneNumbers
+      positions
+      clinic
       workRoutes
     }
   }

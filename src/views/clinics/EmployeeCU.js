@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { BeatLoader } from "react-spinners";
 import ModalForm from "components/modalForm";
 import { Tabs, Select, Row, Col, Form, Input, Spin } from "antd";
-import { useLazyQuery, useMutation } from "@apollo/react-hooks";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import AlertMessage from "components/MyAlert/Alert";
 import {
   createClinicGQL,
@@ -25,26 +25,41 @@ import {
   UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { createUpdateEmployeeGQL } from "graphql/mutations/clinicsMutation";
+import { positionsGQL } from "graphql/queries/clinicsQueries";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
 
 export default function EmployeeCU(props) {
-  const { openModal, handleCloseModal, idClinic, refetchClinics } = props;
+  const { openModal, handleCloseModal, idEmployee, refetchEmployee } = props;
   const countryList = csc.getAllCountries();
   const states = departments();
   const [cities, setCities] = useState([]);
+  const [phones, setPhones] = useState([]);
+  const [positions, setPositions] = useState([]);
 
   const handleState = (e) => {
     const states = comunities(e);
     handleChange(e, "state");
     setCities(states);
   };
+
+  const { loading: positionLoading } = useQuery(positionsGQL, {
+    onCompleted: (e) =>
+      setPositions(
+        e.result.map((v) => {
+          return { label: v.name, value: v.id };
+        })
+      ),
+    onError: (e) => GraphError(e),
+  });
   const [fetchEmployee, { loading: loadingFetch }] = useLazyQuery(
     getClinicGQL,
     {
       onCompleted: (e) => {
         const res = e.result;
+        // setPhones(e.result.phoneNumbers);
+        // setPositions(e.result.positions);
         // debugger;
         updateValues({
           id: null,
@@ -69,7 +84,7 @@ export default function EmployeeCU(props) {
     createUpdateEmployeeGQL,
     {
       onCompleted: (e) => {
-        refetchClinics();
+        refetchEmployee();
         AlertMessage(
           "Completed!",
           <span>Clinic Created Successfully!</span>,
@@ -96,11 +111,10 @@ export default function EmployeeCU(props) {
     clinic: "",
   };
   const submitForm = async () => {
-    const descHtml = convertToHTML(editorState.getCurrentContent());
     const sbm = {
-      id: idClinic,
+      id: idEmployee,
       name: values.name,
-      description: descHtml,
+      description: "descHtml",
       country: values.country,
       state: values.state,
       city: values.city,
@@ -125,18 +139,18 @@ export default function EmployeeCU(props) {
   } = useForm(submitForm, defaultValues, clinicSchema);
 
   useEffect(() => {
-    if (idClinic) {
-      fetchClinic({
-        variables: { id: idClinic },
+    if (idEmployee) {
+      fetchEmployee({
+        variables: { id: idEmployee },
       });
     }
-  }, [idClinic]);
+  }, [idEmployee]);
 
   return (
     <ModalForm
       openModal={openModal}
       width={600}
-      loading={loading || LoadingEdit}
+      loading={loading}
       title={
         <span style={{ display: "flex", alignItems: "center" }}>
           <RiHospitalLine

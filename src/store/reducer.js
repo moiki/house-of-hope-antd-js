@@ -29,6 +29,11 @@ const reducer = (state = initialState, action) => {
         ...state,
         globalAlert: action.payload,
       };
+    case actionName.SET_CLINIC_LIST:
+      return {
+        ...state,
+        clinics: action.payload,
+      };
     default:
       return { ...state };
   }

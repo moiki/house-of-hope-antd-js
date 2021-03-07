@@ -91,3 +91,34 @@ export const createUpdateEmployeeGQL = gql`
     }
   }
 `;
+
+export const createUpdatePositionGQL = gql`
+  mutation createUpdatePosition(
+    $id: string
+    $name: String!
+    $description: String!
+  ) {
+    createUpdatePosition(id: $id, name: $name, description: $description) {
+      status
+      message
+    }
+  }
+`;
+
+export const deleteEmployeeGQL = gql`
+  mutation deleteEmployee($id: String!) {
+    deleteEmployee(id: $id) {
+      message
+      status
+    }
+  }
+`;
+
+export const deletePositionGQL = gql`
+  mutation deletePosition($id: String!) {
+    deletePosition(id: $id) {
+      message
+      status
+    }
+  }
+`;
