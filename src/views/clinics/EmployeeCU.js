@@ -23,9 +23,11 @@ import {
   FileTextOutlined,
   MenuOutlined,
   UsergroupAddOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { createUpdateEmployeeGQL } from "graphql/mutations/clinicsMutation";
 import { positionsGQL } from "graphql/queries/clinicsQueries";
+import ImageUploader from "components/uploaders/ImageUploader";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -153,12 +155,12 @@ export default function EmployeeCU(props) {
       loading={loading}
       title={
         <span style={{ display: "flex", alignItems: "center" }}>
-          <RiHospitalLine
+          <UserOutlined
             size={30}
             className="cl-primary"
             style={{ marginRight: 10 }}
           />{" "}
-          Create a new Clinic
+          Create a new Employee
         </span>
       }
       style={{ top: 20 }}
@@ -176,22 +178,45 @@ export default function EmployeeCU(props) {
           initialValues={{ modifier: "public" }}
         >
           <Row gutter={[10]}>
-            <Col span={12}>
-              <Form.Item
-                validateStatus={errors.name ? "error" : "validating"}
-                help={errors.name}
-                label="Name of Clinic"
-              >
-                <Input
-                  id="name"
-                  name="name"
-                  autoComplete={"false"}
-                  onBlur={handleBlur}
-                  value={values.name}
-                  onChange={handleChange}
-                />
-              </Form.Item>
+            <Col span={16}>
+              <Row gutter={[10]}>
+                <Form.Item
+                  validateStatus={errors.first_name ? "error" : "validating"}
+                  help={errors.first_name}
+                  label="First Name"
+                >
+                  <Input
+                    id="first_name"
+                    name="first_name"
+                    autoComplete={"false"}
+                    onBlur={handleBlur}
+                    value={values.name}
+                    onChange={handleChange}
+                  />
+                </Form.Item>
+              </Row>
+              <Row gutter={[10]}>
+                <Form.Item
+                  validateStatus={errors.last_name ? "error" : "validating"}
+                  help={errors.last_name}
+                  label="Last Name"
+                >
+                  <Input
+                    id="last_name"
+                    name="last_name"
+                    autoComplete={"false"}
+                    onBlur={handleBlur}
+                    value={values.name}
+                    onChange={handleChange}
+                  />
+                </Form.Item>
+              </Row>
             </Col>
+            <Col span={8}>
+              <ImageUploader />
+            </Col>
+          </Row>
+          <Row gutter={[10]}>
             <Col span={12}>
               <Form.Item
                 validateStatus={errors.phone_number ? "error" : "validating"}

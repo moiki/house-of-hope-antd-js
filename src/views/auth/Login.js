@@ -72,7 +72,7 @@ export default function Login(props) {
             <img style={{ marginBottom: "1em" }} src={logo} />
           </div>
           <div
-            class="error-login"
+            className="error-login"
             style={errorState.length > 0 ? { marginBottom: "1rem" } : {}}
           >
             {errorState.length > 0 && (

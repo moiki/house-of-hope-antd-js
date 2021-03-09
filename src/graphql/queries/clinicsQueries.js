@@ -33,7 +33,8 @@ export const employeesListGQL = gql`
   query employeesList {
     result: employeesList {
       id
-      name
+      first_name
+      last_name
       clinic
       address
       email
