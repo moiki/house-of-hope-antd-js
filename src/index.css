@@ -16,6 +16,10 @@ body {
   min-width: 200px;
   position: fixed;
 }
+.ant-upload.ant-upload-select-picture-card {
+  width: unset !important;
+  height: unset !important;
+}
 .h-tooltip {
   font-size: smaller;
   display: block;

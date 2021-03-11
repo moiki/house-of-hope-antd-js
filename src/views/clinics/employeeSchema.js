@@ -11,10 +11,19 @@ export default {
     "any.required": "Last name is required",
     "string.empty": "Last name is required",
   }),
-  email: Joi.string().required().email().label("email").messages({
-    "string.email": "Please enter a valid Email address.",
-    "any.required": "Email is required",
-    "string.empty": "Email is required",
+  email: Joi.string()
+    .required()
+    .email({ tlds: false })
+    .label("email")
+    .messages({
+      "string.email": "Please enter a valid Email address.",
+      "any.required": "Email is required",
+      "string.empty": "Email is required",
+    }),
+  phone_number: Joi.string().required().messages({
+    "string.base": "Phone Number Is Required",
+    "any.required": "Phone Number Is Required",
+    "string.empty": "Phone Number Is Required",
   }),
   birth_date: Joi.string().required().messages({
     "any.required": "Birthday is required",

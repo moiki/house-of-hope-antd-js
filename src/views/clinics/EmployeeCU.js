@@ -1,38 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { BeatLoader } from "react-spinners";
 import ModalForm from "components/modalForm";
 import { Tabs, Select, Row, Col, Form, Input, Spin } from "antd";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import AlertMessage from "components/MyAlert/Alert";
-import {
-  createClinicGQL,
-  updateClinicGQL,
-} from "graphql/mutations/clinicsMutation";
-import { clinicSchema } from "./clinicSchema";
 import { getClinicGQL } from "graphql/queries/clinicsQueries";
-import { RiHospitalLine } from "react-icons/ri";
 import useForm from "utils/useForm/UseForm";
 import csc from "country-state-city";
 import { departments } from "utils/NationalCitiesHandler";
 import { comunities } from "utils/NationalCitiesHandler";
 import { GraphError } from "components/MyAlert/GraphQlError";
-import { EditorState } from "draft-js";
-import { Editor } from "react-draft-wysiwyg";
-import { convertToHTML, convertFromHTML } from "draft-convert";
-import {
-  FileTextOutlined,
-  MenuOutlined,
-  UsergroupAddOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import { createUpdateEmployeeGQL } from "graphql/mutations/clinicsMutation";
 import { positionsGQL } from "graphql/queries/clinicsQueries";
 import ImageUploader from "components/uploaders/ImageUploader";
+import employeeSchema from "./employeeSchema";
+import { MainStore } from "App";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
 
 export default function EmployeeCU(props) {
+  const { state } = useContext(MainStore);
+  const { clinics } = state;
   const { openModal, handleCloseModal, idEmployee, refetchEmployee } = props;
   const countryList = csc.getAllCountries();
   const states = departments();
@@ -44,6 +34,10 @@ export default function EmployeeCU(props) {
     const states = comunities(e);
     handleChange(e, "state");
     setCities(states);
+  };
+
+  const handleclinic = (e) => {
+    handleChange(e, "clinic");
   };
 
   const { loading: positionLoading } = useQuery(positionsGQL, {
@@ -138,7 +132,7 @@ export default function EmployeeCU(props) {
     handleBlur,
     updateValues,
     // updateSchema,<RiHospitalLine className="anticon" />
-  } = useForm(submitForm, defaultValues, clinicSchema);
+  } = useForm(submitForm, defaultValues, employeeSchema);
 
   useEffect(() => {
     if (idEmployee) {
@@ -177,39 +171,76 @@ export default function EmployeeCU(props) {
           name="form_in_modal"
           initialValues={{ modifier: "public" }}
         >
-          <Row gutter={[10]}>
+          <Row gutter={[16, 16]}>
             <Col span={16}>
               <Row gutter={[10]}>
-                <Form.Item
-                  validateStatus={errors.first_name ? "error" : "validating"}
-                  help={errors.first_name}
-                  label="First Name"
-                >
-                  <Input
-                    id="first_name"
-                    name="first_name"
-                    autoComplete={"false"}
-                    onBlur={handleBlur}
-                    value={values.name}
-                    onChange={handleChange}
-                  />
-                </Form.Item>
+                <Col span={22}>
+                  <Form.Item
+                    validateStatus={errors.first_name ? "error" : "validating"}
+                    help={errors.first_name}
+                    label="First Name"
+                  >
+                    <Input
+                      id="first_name"
+                      name="first_name"
+                      autoComplete={"false"}
+                      onBlur={handleBlur}
+                      value={values.name}
+                      onChange={handleChange}
+                    />
+                  </Form.Item>
+                </Col>
               </Row>
               <Row gutter={[10]}>
-                <Form.Item
-                  validateStatus={errors.last_name ? "error" : "validating"}
-                  help={errors.last_name}
-                  label="Last Name"
-                >
-                  <Input
-                    id="last_name"
-                    name="last_name"
-                    autoComplete={"false"}
-                    onBlur={handleBlur}
-                    value={values.name}
-                    onChange={handleChange}
-                  />
-                </Form.Item>
+                <Col span={22}>
+                  <Form.Item
+                    validateStatus={errors.last_name ? "error" : "validating"}
+                    help={errors.last_name}
+                    label="Last Name"
+                  >
+                    <Input
+                      id="last_name"
+                      name="last_name"
+                      autoComplete={"false"}
+                      onBlur={handleBlur}
+                      value={values.name}
+                      onChange={handleChange}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={[2]}>
+                <Col span={22}>
+                  <Form.Item
+                    validateStatus={errors.state ? "error" : "validating"}
+                    help={errors.state}
+                    label="Clinic"
+                  >
+                    <Select
+                      showSearch
+                      id="clinic"
+                      name="clinic"
+                      autoComplete={"false"}
+                      onBlur={handleBlur}
+                      value={values.clinic}
+                      onChange={(value) => {
+                        handleclinic(value);
+                      }}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      {clinics &&
+                        clinics.map((v, i) => (
+                          <Option key={i} value={v.value}>
+                            {v.label}
+                          </Option>
+                        ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
               </Row>
             </Col>
             <Col span={8}>
@@ -229,6 +260,22 @@ export default function EmployeeCU(props) {
                   autoComplete={"false"}
                   onBlur={handleBlur}
                   value={values.phone_number}
+                  onChange={handleChange}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                validateStatus={errors.email ? "error" : "validating"}
+                help={errors.email}
+                label="E-mail"
+              >
+                <Input
+                  id="email"
+                  name="email"
+                  autoComplete={"false"}
+                  onBlur={handleBlur}
+                  value={values.email}
                   onChange={handleChange}
                 />
               </Form.Item>

@@ -34,21 +34,19 @@ const meGQL = gql`
 const LoadingScreen = (props) => {
   const { state, dispatch } = useContext(MainStore);
   const [verifyLogin, setVerifyLogin] = useState(false);
-  const [fetchClinics, { loading: clinicLoading }] = useLazyQuery(
-    clinicListGQL,
-    {
-      onCompleted: (e) => {
-        dispatch({
-          type: SET_CLINIC_LIST,
-          payload: e.result,
-        });
-      },
-    }
-  );
-  const { loading, error, data } = useQuery(meGQL, {
-    fetchPolicy: "no-cache",
-    onCompleted: () => fetchClinics(),
+  const { loading: clinicLoading } = useQuery(clinicListGQL, {
+    onCompleted: (e) => {
+      console.log(e);
+      dispatch({
+        type: SET_CLINIC_LIST,
+        payload: e.result.map((v) => {
+          return { label: v.name, value: v.id };
+        }),
+      });
+    },
+    onError: (e) => console.log(e),
   });
+  const { loading, error, data } = useQuery(meGQL, {});
 
   useEffect(() => {
     if (data && !loading && !clinicLoading) {
@@ -63,6 +61,8 @@ const LoadingScreen = (props) => {
         };
         dispatch({ type: SET_USER, payload: cuser });
         dispatch({ type: SET_HISTORY, payload: props.history });
+        // fetchClinics();
+
         props.setLoading();
       } else {
         logoutAndClear();
