@@ -1,7 +1,18 @@
 import React, { useEffect, useState, useContext } from "react";
 import { BeatLoader } from "react-spinners";
 import ModalForm from "components/modalForm";
-import { Tabs, Select, Row, Col, Form, Input, Spin } from "antd";
+import {
+  Tabs,
+  Select,
+  Row,
+  Col,
+  Form,
+  Input,
+  Spin,
+  Tooltip,
+  Button,
+  Tag,
+} from "antd";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import AlertMessage from "components/MyAlert/Alert";
 import { getClinicGQL } from "graphql/queries/clinicsQueries";
@@ -10,15 +21,126 @@ import csc from "country-state-city";
 import { departments } from "utils/NationalCitiesHandler";
 import { comunities } from "utils/NationalCitiesHandler";
 import { GraphError } from "components/MyAlert/GraphQlError";
-import { UserOutlined } from "@ant-design/icons";
-import { createUpdateEmployeeGQL } from "graphql/mutations/clinicsMutation";
+import {
+  PlusCircleOutlined,
+  PlusOutlined,
+  SolutionOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+import {
+  createUpdateEmployeeGQL,
+  createUpdatePositionGQL,
+} from "graphql/mutations/clinicsMutation";
 import { positionsGQL } from "graphql/queries/clinicsQueries";
 import ImageUploader from "components/uploaders/ImageUploader";
-import employeeSchema from "./employeeSchema";
+import employeeSchema, { positionSchema } from "./employeeSchema";
 import { MainStore } from "App";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
+
+function TagRender(props) {
+  const { label, value, desc, closable, onClose } = props;
+  console.log(props);
+  return (
+    <Tag
+      color={value}
+      closable={closable}
+      onClose={onClose}
+      style={{ marginRight: 3 }}
+    >
+      <Tooltip className="primary" title={desc}>
+        {label}
+      </Tooltip>
+    </Tag>
+  );
+}
+
+const ModalPosition = React.memo((props) => {
+  const [createPosition, { loading }] = useMutation(createUpdatePositionGQL, {
+    onCompleted: () => {
+      if (props.refetch) {
+        props.refetch();
+      }
+      props.handleCloseModal();
+    },
+  });
+  const submit = () => {
+    createPosition({
+      variables: {
+        name: values.name,
+        description: values.description,
+      },
+    });
+  };
+  const { values, errors, handleChange, handleBlur, handleSubmit } = useForm(
+    submit,
+    { name: "", description: "" },
+    positionSchema
+  );
+  return (
+    <ModalForm
+      openModal={props.openModal}
+      loading={loading}
+      title={
+        <span style={{ display: "flex", alignItems: "center" }}>
+          <SolutionOutlined
+            size={30}
+            className="cl-primary"
+            style={{ marginRight: 10 }}
+          />{" "}
+          Add a new position
+        </span>
+      }
+      style={{ top: 20 }}
+      handleClose={props.handleCloseModal}
+      handleSubmit={handleSubmit}
+    >
+      <Form
+        layout="vertical"
+        name="form_in_modal_position"
+        initialValues={{ modifier: "public" }}
+      >
+        <Row gutter={[10]}>
+          <Col span={22}>
+            <Form.Item
+              validateStatus={errors.name ? "error" : "validating"}
+              help={errors.name}
+              label="Position Name"
+            >
+              <Input
+                id="name"
+                name="name"
+                autoComplete={"false"}
+                onBlur={handleBlur}
+                value={values.name}
+                onChange={handleChange}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={[10]}>
+          <Col span={22}>
+            <Form.Item
+              validateStatus={errors.description ? "error" : "validating"}
+              help={errors.description}
+              label="Description"
+            >
+              <Input.TextArea
+                id="description"
+                name="description"
+                autoComplete={"false"}
+                onBlur={handleBlur}
+                value={values.description}
+                onChange={handleChange}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
+    </ModalForm>
+  );
+});
 
 export default function EmployeeCU(props) {
   const { state } = useContext(MainStore);
@@ -27,9 +149,9 @@ export default function EmployeeCU(props) {
   const countryList = csc.getAllCountries();
   const states = departments();
   const [cities, setCities] = useState([]);
-  const [phones, setPhones] = useState([]);
   const [positions, setPositions] = useState([]);
-
+  const [openPositionModal, setOpenPositionModal] = useState(false);
+  const togglePosition = () => setOpenPositionModal(!openPositionModal);
   const handleState = (e) => {
     const states = comunities(e);
     handleChange(e, "state");
@@ -40,15 +162,21 @@ export default function EmployeeCU(props) {
     handleChange(e, "clinic");
   };
 
-  const { loading: positionLoading } = useQuery(positionsGQL, {
-    onCompleted: (e) =>
-      setPositions(
-        e.result.map((v) => {
-          return { label: v.name, value: v.id };
-        })
-      ),
-    onError: (e) => GraphError(e),
-  });
+  const handlePositions = (e) => {
+    handleChange(e, "positions");
+  };
+  const { loading: positionLoading, refetch: posRefetch } = useQuery(
+    positionsGQL,
+    {
+      onCompleted: (e) =>
+        setPositions(
+          e.result.map((v) => {
+            return { label: v.name, value: v.id, desc: v.desscription };
+          })
+        ),
+      onError: (e) => GraphError(e),
+    }
+  );
   const [fetchEmployee, { loading: loadingFetch }] = useLazyQuery(
     getClinicGQL,
     {
@@ -218,6 +346,7 @@ export default function EmployeeCU(props) {
                   >
                     <Select
                       showSearch
+                      showArrow
                       id="clinic"
                       name="clinic"
                       autoComplete={"false"}
@@ -239,6 +368,55 @@ export default function EmployeeCU(props) {
                           </Option>
                         ))}
                     </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={[2]}>
+                <Col span={18}>
+                  <Form.Item
+                    validateStatus={errors.state ? "error" : "validating"}
+                    help={errors.state}
+                    label="Positions"
+                  >
+                    <Select
+                      showSearch
+                      showArrow
+                      mode="multiple"
+                      id="positions"
+                      name="positions"
+                      autoComplete={"false"}
+                      onBlur={handleBlur}
+                      value={values.positions}
+                      onChange={(value) => {
+                        handlePositions(value);
+                      }}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      {positions &&
+                        positions.map((v, i) => (
+                          <Option key={i} value={v.value}>
+                            <div className="demo-option-label-item">
+                              {v.label}
+                            </div>
+                          </Option>
+                        ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col span={6}>
+                  <Form.Item label=" ">
+                    <Tooltip title="Agregate a new position">
+                      <Button
+                        type="primary"
+                        onClick={togglePosition}
+                        shape="circle"
+                        icon={<PlusOutlined />}
+                      />
+                    </Tooltip>
                   </Form.Item>
                 </Col>
               </Row>
@@ -382,6 +560,11 @@ export default function EmployeeCU(props) {
           </Row>
         </Form>
       </Spin>
+      <ModalPosition
+        refetch={posRefetch}
+        openModal={openPositionModal}
+        handleCloseModal={togglePosition}
+      />
     </ModalForm>
   );
 }

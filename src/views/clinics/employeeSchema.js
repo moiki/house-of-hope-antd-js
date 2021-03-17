@@ -1,5 +1,18 @@
 import Joi from "@hapi/joi";
 
+export const positionSchema = {
+  name: Joi.string().required().label("Position Name").messages({
+    "string.base": "Position name is required",
+    "any.required": "Position name is required",
+    "string.empty": "Position name is required",
+  }),
+  description: Joi.string().required().label("Description").messages({
+    "string.base": "Description is required",
+    "any.required": "Description is required",
+    "string.empty": "Description is required",
+  }),
+};
+
 export default {
   first_name: Joi.string().required().label("First name").messages({
     "string.base": "First name is required",

@@ -94,7 +94,7 @@ export const createUpdateEmployeeGQL = gql`
 
 export const createUpdatePositionGQL = gql`
   mutation createUpdatePosition(
-    $id: string
+    $id: String
     $name: String!
     $description: String!
   ) {

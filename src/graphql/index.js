@@ -5,6 +5,7 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloLink, Observable } from "apollo-link";
 import { onError } from "apollo-link-error";
 import dotenv from "dotenv";
+import { hist } from "App";
 
 dotenv.config();
 
@@ -55,9 +56,12 @@ const errorHandler = onError(
     if (WHITE_LINKS.indexOf(operationName) > -1) {
       return forward(operation);
     } else if (graphQLErrors) {
-      const errorMessage = graphQLErrors[0].extensions.code;
+      const theresUNAUTH = graphQLErrors.some(
+        (f) => f.extensions.code === "UNAUTHENTICATED"
+      );
+      // const errorMessage = graphQLErrors[0].extensions.code;
       // UNAUTHENTICATED
-      if (errorMessage === "UNAUTHENTICATED") {
+      if (theresUNAUTH) {
         // const token = localStorage.getItem('token')
         // Let's refresh token through async request
         return new Observable((observer) => {
@@ -83,6 +87,8 @@ const errorHandler = onError(
             })
             .catch((error) => {
               // No refresh or client token available, we force user to login
+              hist.push("/auth/login");
+              localStorage.clear();
               observer.error(error);
             });
         });
