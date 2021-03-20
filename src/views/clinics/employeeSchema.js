@@ -33,14 +33,19 @@ export default {
       "any.required": "Email is required",
       "string.empty": "Email is required",
     }),
-  phone_number: Joi.string().required().messages({
-    "string.base": "Phone Number Is Required",
-    "any.required": "Phone Number Is Required",
-    "string.empty": "Phone Number Is Required",
+  positions: Joi.array().required().messages({
+    "string.empty": "Positions element is Required",
+    "any.required": "Positions element is Required",
+    "array.empty": "Positions element is Required",
   }),
-  birth_date: Joi.string().required().messages({
-    "any.required": "Birthday is required",
-    "string.empty": "Birthday is required",
+  phone_number: Joi.string().required().messages({
+    "string.base": "Phone Number is Required",
+    "any.required": "Phone Number is Required",
+    "string.empty": "Phone Number is Required",
+  }),
+  address: Joi.string().required().messages({
+    "any.required": "Address is required",
+    "string.empty": "Address is required",
   }),
   country: Joi.string().required().messages({
     "string.base": "Country Is Required",
@@ -59,8 +64,8 @@ export default {
   }),
 
   clinic: Joi.string().required().messages({
-    "string.base": "City Is Required",
-    "any.required": "City Is Required",
-    "string.empty": "City Is Required",
+    "string.base": "Clinic Is Required",
+    "any.required": "Clinic Is Required",
+    "string.empty": "Clinic Is Required",
   }),
 };

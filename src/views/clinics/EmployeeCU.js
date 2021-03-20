@@ -223,22 +223,33 @@ export default function EmployeeCU(props) {
   );
 
   const defaultValues = {
-    id: null,
-    first_name: null,
-    last_name: null,
-    birth_date: "",
-    email: null,
+    first_name: "",
+    last_name: "",
+    clinic: "",
+    email: "",
+    positions: [],
     address: "",
     country: "Nicaragua",
     state: "",
     city: "",
-    clinic: "",
+    country: "",
+    state: "",
+    city: "",
+    address: "",
+    phone_number: "",
   };
   const submitForm = async () => {
     const sbm = {
       id: idEmployee,
-      name: values.name,
-      description: "descHtml",
+      first_name: values.first_name,
+      last_name: values.last_name,
+      clinic: values.clinic,
+      email: values.email,
+      positions: values.positions,
+      address: values.address,
+      country: "Nicaragua",
+      state: values.state,
+      city: values.city,
       country: values.country,
       state: values.state,
       city: values.city,
@@ -269,6 +280,12 @@ export default function EmployeeCU(props) {
       });
     }
   }, [idEmployee]);
+
+  useEffect(() => {
+    if (errors) {
+      console.log(errors);
+    }
+  }, [errors]);
 
   return (
     <ModalForm
@@ -340,8 +357,8 @@ export default function EmployeeCU(props) {
               <Row gutter={[2]}>
                 <Col span={22}>
                   <Form.Item
-                    validateStatus={errors.state ? "error" : "validating"}
-                    help={errors.state}
+                    validateStatus={errors.clinic ? "error" : "validating"}
+                    help={errors.clinic}
                     label="Clinic"
                   >
                     <Select
@@ -374,8 +391,8 @@ export default function EmployeeCU(props) {
               <Row gutter={[2]}>
                 <Col span={18}>
                   <Form.Item
-                    validateStatus={errors.state ? "error" : "validating"}
-                    help={errors.state}
+                    validateStatus={errors.positions ? "error" : "validating"}
+                    help={errors.positions}
                     label="Positions"
                   >
                     <Select
@@ -464,7 +481,7 @@ export default function EmployeeCU(props) {
               <Form.Item
                 validateStatus={errors.country ? "error" : "validating"}
                 help={errors.country}
-                label="country"
+                label="Country"
               >
                 <Input
                   disabled
@@ -472,7 +489,7 @@ export default function EmployeeCU(props) {
                   name="country"
                   autoComplete={"false"}
                   onBlur={handleBlur}
-                  value={values.country || "Nicaragua"}
+                  value={values.country}
                   onChange={handleChange}
                 />
               </Form.Item>

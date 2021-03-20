@@ -64,12 +64,12 @@ export const createUpdateEmployeeGQL = gql`
     $id: String
     $first_name: String!
     $last_name: String!
-    $birth_date: DateTime!
+    $address: DateTime!
     $email: String!
     $country: String!
     $state: String
     $city: String
-    $phoneNumbers: [String!]!
+    $phone_number: String!
     $positions: [String!]!
     $clinic: String!
   ) {
@@ -77,12 +77,12 @@ export const createUpdateEmployeeGQL = gql`
       id: $id
       first_name: $first_name
       last_name: $last_name
-      birth_date: $birth_date
+      address: $address
       email: $email
       country: $country
       state: $state
       city: $city
-      phoneNumbers: $phoneNumbers
+      phone_number: $phone_number
       positions: $positions
       clinic: $clinic
     ) {
