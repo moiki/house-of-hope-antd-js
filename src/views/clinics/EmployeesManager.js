@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Popconfirm, Space, Table } from "antd";
+import { Button, Popconfirm, Space, Table, Tag } from "antd";
 import moment from "moment";
 import randomIdForRow from "utils/TableKeygen";
 import { useScreenObserverHook } from "utils/ScreenObserverHook";
@@ -32,7 +32,16 @@ export default function EmployeesManager() {
 
   const [refetchEmployees, { loadingFetch }] = useLazyQuery(employeesListGQL, {
     onCompleted: (e) => {
-      setLocalData(e.result);
+      const resp = e.result.map((v) => {
+        return {
+          ...v,
+          name: `${v.first_name} ${v.last_name}`,
+          phone: v.phone_number,
+          clinic: v.clinic,
+        };
+      });
+      // console.log(resp);
+      setLocalData(resp);
     },
     onError: (e) => {
       AlertMessage(
@@ -89,19 +98,32 @@ export default function EmployeesManager() {
       render: (text) => <span>{moment(text).format("MMM Do, YYYY")}</span>,
     },
     {
-      title: "Phone",
-      dataIndex: "phone",
-      key: "phone",
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
     },
     {
-      title: "City",
-      dataIndex: "city",
-      key: "city",
+      title: "Position Role",
+      dataIndex: "positions",
+      key: "positions",
+      render: (text) => (
+        <span>
+          {text.length
+            ? text.map((v, i) => {
+                return (
+                  <Tag color="green" key={i}>
+                    {v.label.toUpperCase()}
+                  </Tag>
+                );
+              })
+            : null}
+        </span>
+      ),
     },
     {
       title: "Clinic",
-      dataIndex: "employees",
-      key: "employees",
+      dataIndex: "clinic",
+      key: "clinic",
     },
     {
       title: "Action",
@@ -159,7 +181,7 @@ export default function EmployeesManager() {
       {modalEmployeeState && (
         <EmployeeCU
           idEmployee={idEmployee}
-          refetchEmployeess={refetchEmployees}
+          refetchEmployees={refetchEmployees}
           handleCloseModal={handleClickClose}
           openModal={modalEmployeeState}
         />

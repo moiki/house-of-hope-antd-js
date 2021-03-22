@@ -64,7 +64,7 @@ export const createUpdateEmployeeGQL = gql`
     $id: String
     $first_name: String!
     $last_name: String!
-    $address: DateTime!
+    $address: String!
     $email: String!
     $country: String!
     $state: String

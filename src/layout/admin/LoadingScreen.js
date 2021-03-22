@@ -36,7 +36,6 @@ const LoadingScreen = (props) => {
   const [verifyLogin, setVerifyLogin] = useState(false);
   const { loading: clinicLoading } = useQuery(clinicListGQL, {
     onCompleted: (e) => {
-      console.log(e);
       dispatch({
         type: SET_CLINIC_LIST,
         payload: e.result.map((v) => {

@@ -35,6 +35,7 @@ import { positionsGQL } from "graphql/queries/clinicsQueries";
 import ImageUploader from "components/uploaders/ImageUploader";
 import employeeSchema, { positionSchema } from "./employeeSchema";
 import { MainStore } from "App";
+import { getEmployeeGQL } from "graphql/queries/clinicsQueries";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -145,7 +146,7 @@ const ModalPosition = React.memo((props) => {
 export default function EmployeeCU(props) {
   const { state } = useContext(MainStore);
   const { clinics } = state;
-  const { openModal, handleCloseModal, idEmployee, refetchEmployee } = props;
+  const { openModal, handleCloseModal, idEmployee, refetchEmployees } = props;
   const countryList = csc.getAllCountries();
   const states = departments();
   const [cities, setCities] = useState([]);
@@ -178,24 +179,21 @@ export default function EmployeeCU(props) {
     }
   );
   const [fetchEmployee, { loading: loadingFetch }] = useLazyQuery(
-    getClinicGQL,
+    getEmployeeGQL,
     {
       onCompleted: (e) => {
         const res = e.result;
-        // setPhones(e.result.phoneNumbers);
-        // setPositions(e.result.positions);
-        // debugger;
         updateValues({
-          id: null,
-          first_name: null,
-          last_name: null,
-          birth_date: "",
-          email: null,
-          address: "",
-          country: "Nicaragua",
-          state: "",
-          city: "",
-          clinic: "",
+          first_name: res.first_name,
+          last_name: res.last_name,
+          clinic: res.clinic,
+          email: res.email,
+          positions: res.positions.map((v) => v.value),
+          address: res.address,
+          country: res.country,
+          state: res.state,
+          city: res.city,
+          phone_number: res.phone_number,
         });
       },
       onError: (e) => {
@@ -208,16 +206,17 @@ export default function EmployeeCU(props) {
     createUpdateEmployeeGQL,
     {
       onCompleted: (e) => {
-        refetchEmployee();
+        refetchEmployees();
         AlertMessage(
           "Completed!",
-          <span>Clinic Created Successfully!</span>,
+          <span>Employee Created Successfully!</span>,
           "success"
         );
         handleCloseModal();
       },
       onError: (e) => {
-        GraphError(e);
+        console.log(e);
+        // GraphError(e);
       },
     }
   );
@@ -232,10 +231,6 @@ export default function EmployeeCU(props) {
     country: "Nicaragua",
     state: "",
     city: "",
-    country: "",
-    state: "",
-    city: "",
-    address: "",
     phone_number: "",
   };
   const submitForm = async () => {
@@ -250,10 +245,6 @@ export default function EmployeeCU(props) {
       country: "Nicaragua",
       state: values.state,
       city: values.city,
-      country: values.country,
-      state: values.state,
-      city: values.city,
-      address: values.address,
       phone_number: values.phone_number,
     };
     executeCreateUpdate({
@@ -280,12 +271,6 @@ export default function EmployeeCU(props) {
       });
     }
   }, [idEmployee]);
-
-  useEffect(() => {
-    if (errors) {
-      console.log(errors);
-    }
-  }, [errors]);
 
   return (
     <ModalForm
@@ -330,7 +315,7 @@ export default function EmployeeCU(props) {
                       name="first_name"
                       autoComplete={"false"}
                       onBlur={handleBlur}
-                      value={values.name}
+                      value={values.first_name}
                       onChange={handleChange}
                     />
                   </Form.Item>
@@ -348,7 +333,7 @@ export default function EmployeeCU(props) {
                       name="last_name"
                       autoComplete={"false"}
                       onBlur={handleBlur}
-                      value={values.name}
+                      value={values.last_name}
                       onChange={handleChange}
                     />
                   </Form.Item>

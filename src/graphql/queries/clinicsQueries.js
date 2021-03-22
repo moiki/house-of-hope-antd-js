@@ -36,9 +36,12 @@ export const employeesListGQL = gql`
       first_name
       last_name
       clinic
+      phone_number
+      positions {
+        label
+      }
       address
       email
-      birth_date
       workRoutes
     }
   }
@@ -74,15 +77,20 @@ export const getClinicGQL = gql`
 export const getEmployeeGQL = gql`
   query getEmployee($id: String!) {
     result: getEmployee(id: $id) {
+      id
       first_name
       last_name
-      address
-      country
-      state
       city
-      phoneNumbers
-      positions
+      state
+      country
       clinic
+      phone_number
+      positions {
+        label
+        value
+      }
+      address
+      email
       workRoutes
     }
   }
