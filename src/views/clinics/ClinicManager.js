@@ -105,9 +105,10 @@ export default function ClinicManager() {
       render: (text) => (
         <Space size="middle">
           <Button
-            type="ghost"
+            className="ant-btn-info"
             onClick={() => handleEdit(text)}
             icon={<EditOutlined />}
+            shape="round"
           >
             Edit
           </Button>
@@ -118,7 +119,11 @@ export default function ClinicManager() {
             okText="Yes"
             cancelText="No"
           >
-            <Button icon={<DeleteOutlined />} danger>
+            <Button
+              icon={<DeleteOutlined />}
+              className="ant-btn-danger"
+              shape="round"
+            >
               Delete
             </Button>
           </Popconfirm>

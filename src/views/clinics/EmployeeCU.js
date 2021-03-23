@@ -151,6 +151,7 @@ export default function EmployeeCU(props) {
   const states = departments();
   const [cities, setCities] = useState([]);
   const [positions, setPositions] = useState([]);
+  const [imageEmployee, setImageEmployee] = useState(null);
   const [openPositionModal, setOpenPositionModal] = useState(false);
   const togglePosition = () => setOpenPositionModal(!openPositionModal);
   const handleState = (e) => {
@@ -236,6 +237,7 @@ export default function EmployeeCU(props) {
   const submitForm = async () => {
     const sbm = {
       id: idEmployee,
+      image: "imageEmployee",
       first_name: values.first_name,
       last_name: values.last_name,
       clinic: values.clinic,
@@ -424,7 +426,10 @@ export default function EmployeeCU(props) {
               </Row>
             </Col>
             <Col span={8}>
-              <ImageUploader />
+              <ImageUploader
+                setImageValue={(v) => setImageEmployee(v)}
+                imageValue={imageEmployee}
+              />
             </Col>
           </Row>
           <Row gutter={[10]}>

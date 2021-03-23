@@ -75,7 +75,8 @@ export default function Users(props) {
       render: (text) => (
         <Space size="middle">
           <Button
-            type="ghost"
+            className="ant-btn-info"
+            shape="round"
             onClick={() => handleUpdate(text)}
             icon={<EditOutlined />}
           >
@@ -88,7 +89,11 @@ export default function Users(props) {
             okText="Yes"
             cancelText="No"
           >
-            <Button icon={<DeleteOutlined />} danger>
+            <Button
+              icon={<DeleteOutlined />}
+              shape="round"
+              className="ant-btn-danger"
+            >
               Delete
             </Button>
           </Popconfirm>

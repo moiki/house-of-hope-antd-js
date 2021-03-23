@@ -133,6 +133,8 @@ export default function EmployeesManager() {
         <Space size="middle">
           <Button
             type="ghost"
+            shape="round"
+            className="ant-btn-info"
             onClick={() => handleEdit(text)}
             icon={<EditOutlined />}
           >
@@ -145,7 +147,11 @@ export default function EmployeesManager() {
             okText="Yes"
             cancelText="No"
           >
-            <Button icon={<DeleteOutlined />} danger>
+            <Button
+              icon={<DeleteOutlined />}
+              shape="round"
+              className="ant-btn-danger"
+            >
               Delete
             </Button>
           </Popconfirm>

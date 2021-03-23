@@ -49,7 +49,7 @@ const handlePreview = async (file, setImageState) => {
   });
 };
 
-export default function ImageUploader({ setImageValue }) {
+export default function ImageUploader({ setImageValue, imageValue }) {
   const imageINITIAL = {
     previewVisible: false,
     previewImage:
@@ -81,9 +81,18 @@ export default function ImageUploader({ setImageValue }) {
 
   useEffect(() => {
     if (setImageValue) {
-      setImageValue(imageState.value);
+      setImageValue(imageState.previewImage);
     }
   }, [imageState]);
+
+  useEffect(() => {
+    if (imageValue) {
+      setimageState({
+        ...imageState,
+        previewImage: imageValue,
+      });
+    }
+  }, []);
   return (
     <>
       <Upload
