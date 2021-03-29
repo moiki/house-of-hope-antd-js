@@ -1,156 +1,30 @@
 import React, { useEffect, useState, useContext } from "react";
 import { BeatLoader } from "react-spinners";
 import ModalForm from "components/modalForm";
-import {
-  Tabs,
-  Select,
-  Row,
-  Col,
-  Form,
-  Input,
-  Spin,
-  Tooltip,
-  Button,
-  Tag,
-} from "antd";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
+import { Select, Row, Col, Form, Input, Spin, DatePicker } from "antd";
+import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import AlertMessage from "components/MyAlert/Alert";
-import { getClinicGQL } from "graphql/queries/clinicsQueries";
 import useForm from "utils/useForm/UseForm";
 import csc from "country-state-city";
 import { departments } from "utils/NationalCitiesHandler";
 import { comunities } from "utils/NationalCitiesHandler";
 import { GraphError } from "components/MyAlert/GraphQlError";
-import {
-  PlusCircleOutlined,
-  PlusOutlined,
-  SolutionOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import {
-  createUpdateEmployeeGQL,
-  createUpdatePositionGQL,
-} from "graphql/mutations/clinicsMutation";
-import { positionsGQL } from "graphql/queries/clinicsQueries";
+import { MedicineBoxOutlined, UserOutlined } from "@ant-design/icons";
+import { CreateUpdatePatientGQL } from "graphql/mutations/patientMutation";
 import ImageUploader from "components/uploaders/ImageUploader";
-import employeeSchema, { positionSchema } from "./employeeSchema";
 import { MainStore } from "App";
-import { getEmployeeGQL } from "graphql/queries/clinicsQueries";
+import { getPatientGQL } from "graphql/queries/patientsQueries";
+import patientSchema from "./patientSchema";
 
 const { Option } = Select;
-const { TabPane } = Tabs;
 
-function TagRender(props) {
-  const { label, value, desc, closable, onClose } = props;
-  console.log(props);
-  return (
-    <Tag
-      color={value}
-      closable={closable}
-      onClose={onClose}
-      style={{ marginRight: 3 }}
-    >
-      <Tooltip className="primary" title={desc}>
-        {label}
-      </Tooltip>
-    </Tag>
-  );
-}
-
-const ModalPosition = React.memo((props) => {
-  const [createPosition, { loading }] = useMutation(createUpdatePositionGQL, {
-    onCompleted: () => {
-      if (props.refetch) {
-        props.refetch();
-      }
-      props.handleCloseModal();
-    },
-  });
-  const submit = () => {
-    createPosition({
-      variables: {
-        name: values.name,
-        description: values.description,
-      },
-    });
-  };
-  const { values, errors, handleChange, handleBlur, handleSubmit } = useForm(
-    submit,
-    { name: "", description: "" },
-    positionSchema
-  );
-  return (
-    <ModalForm
-      openModal={props.openModal}
-      loading={loading}
-      title={
-        <span style={{ display: "flex", alignItems: "center" }}>
-          <SolutionOutlined
-            size={30}
-            className="cl-primary"
-            style={{ marginRight: 10 }}
-          />{" "}
-          Add a new position
-        </span>
-      }
-      style={{ top: 20 }}
-      handleClose={props.handleCloseModal}
-      handleSubmit={handleSubmit}
-    >
-      <Form
-        layout="vertical"
-        name="form_in_modal_position"
-        initialValues={{ modifier: "public" }}
-      >
-        <Row gutter={[10]}>
-          <Col span={22}>
-            <Form.Item
-              validateStatus={errors.name ? "error" : "validating"}
-              help={errors.name}
-              label="Position Name"
-            >
-              <Input
-                id="name"
-                name="name"
-                autoComplete={"false"}
-                onBlur={handleBlur}
-                value={values.name}
-                onChange={handleChange}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={[10]}>
-          <Col span={22}>
-            <Form.Item
-              validateStatus={errors.description ? "error" : "validating"}
-              help={errors.description}
-              label="Description"
-            >
-              <Input.TextArea
-                id="description"
-                name="description"
-                autoComplete={"false"}
-                onBlur={handleBlur}
-                value={values.description}
-                onChange={handleChange}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
-    </ModalForm>
-  );
-});
-
-export default function EmployeeCU(props) {
+export default function PatientCU(props) {
   const { state } = useContext(MainStore);
   const { clinics } = state;
-  const { openModal, handleCloseModal, idEmployee, refetchEmployees } = props;
+  const { openModal, handleCloseModal, idPatient, refetchPatients } = props;
   const countryList = csc.getAllCountries();
   const states = departments();
   const [cities, setCities] = useState([]);
-  const [positions, setPositions] = useState([]);
   const [imageEmployee, setImageEmployee] = useState(null);
   const [openPositionModal, setOpenPositionModal] = useState(false);
   const togglePosition = () => setOpenPositionModal(!openPositionModal);
@@ -164,23 +38,8 @@ export default function EmployeeCU(props) {
     handleChange(e, "clinic");
   };
 
-  const handlePositions = (e) => {
-    handleChange(e, "positions");
-  };
-  const { loading: positionLoading, refetch: posRefetch } = useQuery(
-    positionsGQL,
-    {
-      onCompleted: (e) =>
-        setPositions(
-          e.result.map((v) => {
-            return { label: v.name, value: v.id, desc: v.desscription };
-          })
-        ),
-      onError: (e) => GraphError(e),
-    }
-  );
-  const [fetchEmployee, { loading: loadingFetch }] = useLazyQuery(
-    getEmployeeGQL,
+  const [fetchPatient, { loading: loadingFetch }] = useLazyQuery(
+    getPatientGQL,
     {
       onCompleted: (e) => {
         const res = e.result;
@@ -188,13 +47,12 @@ export default function EmployeeCU(props) {
           first_name: res.first_name,
           last_name: res.last_name,
           clinic: res.clinic,
-          email: res.email,
-          positions: res.positions.map((v) => v.value),
+          profile: res.profile,
           address: res.address,
           country: res.country,
           state: res.state,
           city: res.city,
-          phone_number: res.phone_number,
+          gender: res.gender,
         });
       },
       onError: (e) => {
@@ -204,10 +62,10 @@ export default function EmployeeCU(props) {
     }
   );
   const [executeCreateUpdate, { loading }] = useMutation(
-    createUpdateEmployeeGQL,
+    CreateUpdatePatientGQL,
     {
       onCompleted: (e) => {
-        refetchEmployees();
+        refetchPatients();
         AlertMessage(
           "Completed!",
           <span>Employee Created Successfully!</span>,
@@ -216,8 +74,7 @@ export default function EmployeeCU(props) {
         handleCloseModal();
       },
       onError: (e) => {
-        console.log(e);
-        // GraphError(e);
+        GraphError(e);
       },
     }
   );
@@ -226,28 +83,26 @@ export default function EmployeeCU(props) {
     first_name: "",
     last_name: "",
     clinic: "",
-    email: "",
-    positions: [],
+    birth_date: "",
+    gender: "",
     address: "",
     country: "Nicaragua",
     state: "",
     city: "",
-    phone_number: "",
   };
   const submitForm = async () => {
     const sbm = {
-      id: idEmployee,
-      image: "imageEmployee",
+      id: idPatient,
+      profile: null,
       first_name: values.first_name,
       last_name: values.last_name,
       clinic: values.clinic,
-      email: values.email,
-      positions: values.positions,
+      birth_date: values.birth_date,
+      gender: values.gender,
       address: values.address,
       country: "Nicaragua",
       state: values.state,
       city: values.city,
-      phone_number: values.phone_number,
     };
     executeCreateUpdate({
       variables: {
@@ -264,15 +119,21 @@ export default function EmployeeCU(props) {
     handleBlur,
     updateValues,
     // updateSchema,<RiHospitalLine className="anticon" />
-  } = useForm(submitForm, defaultValues, employeeSchema);
+  } = useForm(submitForm, defaultValues, patientSchema);
 
   useEffect(() => {
-    if (idEmployee) {
-      fetchEmployee({
-        variables: { id: idEmployee },
+    if (idPatient) {
+      fetchPatient({
+        variables: { id: idPatient },
       });
     }
-  }, [idEmployee]);
+  }, [idPatient]);
+
+  useEffect(() => {
+    if (errors) {
+      console.log(errors);
+    }
+  }, [errors]);
 
   return (
     <ModalForm
@@ -281,12 +142,12 @@ export default function EmployeeCU(props) {
       loading={loading}
       title={
         <span style={{ display: "flex", alignItems: "center" }}>
-          <UserOutlined
-            size={30}
+          <MedicineBoxOutlined
+            size={50}
             className="cl-primary"
             style={{ marginRight: 10 }}
           />{" "}
-          Register a new employee
+          Register a new patient
         </span>
       }
       style={{ top: 20 }}
@@ -375,55 +236,6 @@ export default function EmployeeCU(props) {
                   </Form.Item>
                 </Col>
               </Row>
-              <Row gutter={[2]}>
-                <Col span={18}>
-                  <Form.Item
-                    validateStatus={errors.positions ? "error" : "validating"}
-                    help={errors.positions}
-                    label="Positions"
-                  >
-                    <Select
-                      showSearch
-                      showArrow
-                      mode="multiple"
-                      id="positions"
-                      name="positions"
-                      autoComplete={"false"}
-                      onBlur={handleBlur}
-                      value={values.positions}
-                      onChange={(value) => {
-                        handlePositions(value);
-                      }}
-                      filterOption={(input, option) =>
-                        option.children
-                          .toLowerCase()
-                          .indexOf(input.toLowerCase()) >= 0
-                      }
-                    >
-                      {positions &&
-                        positions.map((v, i) => (
-                          <Option key={i} value={v.value}>
-                            <div className="demo-option-label-item">
-                              {v.label}
-                            </div>
-                          </Option>
-                        ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={6}>
-                  <Form.Item label=" ">
-                    <Tooltip title="Agregate a new position">
-                      <Button
-                        type="primary"
-                        onClick={togglePosition}
-                        shape="circle"
-                        icon={<PlusOutlined />}
-                      />
-                    </Tooltip>
-                  </Form.Item>
-                </Col>
-              </Row>
             </Col>
             <Col span={8}>
               <ImageUploader
@@ -435,33 +247,42 @@ export default function EmployeeCU(props) {
           <Row gutter={[10]}>
             <Col span={12}>
               <Form.Item
-                validateStatus={errors.phone_number ? "error" : "validating"}
-                help={errors.phone_number}
-                label="Phone Number"
+                validateStatus={errors.gender ? "error" : "validating"}
+                help={errors.gender}
+                label="Gender"
               >
-                <Input
-                  id="phone_number"
-                  name="phone_number"
+                <Select
+                  showSearch
+                  showArrow
+                  id="gender"
+                  name="gender"
                   autoComplete={"false"}
                   onBlur={handleBlur}
-                  value={values.phone_number}
-                  onChange={handleChange}
-                />
+                  value={values.gender}
+                  onChange={(value) => {
+                    handleChange(value, "gender");
+                  }}
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  <Option value="MALE">MALE</Option>{" "}
+                  <Option value="FEMALE">FEMALE</Option>
+                </Select>
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                validateStatus={errors.email ? "error" : "validating"}
-                help={errors.email}
-                label="E-mail"
+                validateStatus={errors.birth_date ? "error" : "validating"}
+                help={errors.birth_date}
+                label="Birthday"
               >
-                <Input
-                  id="email"
-                  name="email"
-                  autoComplete={"false"}
-                  onBlur={handleBlur}
-                  value={values.email}
-                  onChange={handleChange}
+                <DatePicker
+                  onChange={(v) =>
+                    handleChange(v.format("MM-DD-YYYY"), "birth_date")
+                  }
                 />
               </Form.Item>
             </Col>
@@ -567,11 +388,6 @@ export default function EmployeeCU(props) {
           </Row>
         </Form>
       </Spin>
-      <ModalPosition
-        refetch={posRefetch}
-        openModal={openPositionModal}
-        handleCloseModal={togglePosition}
-      />
     </ModalForm>
   );
 }

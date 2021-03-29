@@ -1,4 +1,4 @@
-import { gql } from "graphql-tag";
+import gql from "graphql-tag";
 
 export const getPatientGQL = gql`
   query getPatient($id: String!) {

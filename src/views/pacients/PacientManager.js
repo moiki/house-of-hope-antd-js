@@ -4,11 +4,21 @@ import { Button, Popconfirm, Space, Table } from "antd";
 import moment from "moment";
 import randomIdForRow from "utils/TableKeygen";
 import { useScreenObserverHook } from "utils/ScreenObserverHook";
+import PatientCU from "./patientCU";
 
 export default function PacientsManager() {
   const [loaded, setLoaded] = useState(false);
+  const [idPatient, setIdPatient] = useState(null);
   const { setRef, visible } = useScreenObserverHook();
   const [localData, setLocalData] = useState([]);
+  const [modalPatientState, setModalPatientState] = useState(false);
+  const handleModalPatient = () => setModalPatientState(!modalPatientState);
+  const handleClickClose = () => {
+    handleModalPatient();
+    if (idPatient) {
+      setIdPatient(null);
+    }
+  };
   const columns = [
     {
       title: "Name",
@@ -33,8 +43,8 @@ export default function PacientsManager() {
     },
     {
       title: "Clinic",
-      dataIndex: "employees",
-      key: "employees",
+      dataIndex: "clinic",
+      key: "clinic",
     },
     {
       title: "Action",
@@ -42,17 +52,27 @@ export default function PacientsManager() {
       key: "id",
       render: (text) => (
         <Space size="middle">
-          <Button type="ghost" icon={<EditOutlined />}>
+          <Button
+            type="ghost"
+            shape="round"
+            className="ant-btn-info"
+            onClick={() => handleEdit(text)}
+            icon={<EditOutlined />}
+          >
             Edit
           </Button>
           <Popconfirm
             placement="top"
-            title={"Are you sure to delete this Account?"}
+            title={"Are you sure to delete this Patient?"}
             // onConfirm={() => handleDelete(text)}
             okText="Yes"
             cancelText="No"
           >
-            <Button icon={<DeleteOutlined />} danger>
+            <Button
+              icon={<DeleteOutlined />}
+              shape="round"
+              className="ant-btn-danger"
+            >
               Delete
             </Button>
           </Popconfirm>
@@ -60,12 +80,17 @@ export default function PacientsManager() {
       ),
     },
   ];
+
+  const handleEdit = (e) => {
+    setIdPatient(e);
+    handleModalPatient();
+  };
   return (
     <div>
       <Button
         type="primary"
         shape="round"
-        // onClick={handleModalInvitation}
+        onClick={handleModalPatient}
         icon={<PlusOutlined />}
       >
         Add New Pacient
@@ -77,6 +102,14 @@ export default function PacientsManager() {
         dataSource={localData}
         rowKey={() => randomIdForRow()}
       />
+      {modalPatientState && (
+        <PatientCU
+          idPatient={idPatient}
+          // refetchPatients={refetchPatients}
+          handleCloseModal={handleClickClose}
+          openModal={modalPatientState}
+        />
+      )}
     </div>
   );
 }

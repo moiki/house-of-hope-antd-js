@@ -1,4 +1,4 @@
-import { gql } from "graphql-tag";
+import gql from "graphql-tag";
 
 export const CreateUpdatePatientGQL = gql`
   mutation CreateUpdatePatient(
@@ -7,7 +7,7 @@ export const CreateUpdatePatientGQL = gql`
     $last_name: String!
     $address: String!
     $profile: String
-    $email: String!
+    $birth_date: String!
     $country: String!
     $state: String
     $city: String
@@ -20,7 +20,7 @@ export const CreateUpdatePatientGQL = gql`
       last_name: $last_name
       address: $address
       profile: $profile
-      email: $email
+      birth_date: $birth_date
       country: $country
       state: $state
       city: $city
