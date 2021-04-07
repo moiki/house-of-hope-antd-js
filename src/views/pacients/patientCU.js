@@ -26,8 +26,6 @@ export default function PatientCU(props) {
   const states = departments();
   const [cities, setCities] = useState([]);
   const [imageEmployee, setImageEmployee] = useState(null);
-  const [openPositionModal, setOpenPositionModal] = useState(false);
-  const togglePosition = () => setOpenPositionModal(!openPositionModal);
   const handleState = (e) => {
     const states = comunities(e);
     handleChange(e, "state");
@@ -268,8 +266,12 @@ export default function PatientCU(props) {
                       .indexOf(input.toLowerCase()) >= 0
                   }
                 >
-                  <Option value="MALE">MALE</Option>{" "}
-                  <Option value="FEMALE">FEMALE</Option>
+                  <Option key={1} value="MALE">
+                    MALE
+                  </Option>{" "}
+                  <Option key={2} value="FEMALE">
+                    FEMALE
+                  </Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -280,6 +282,7 @@ export default function PatientCU(props) {
                 label="Birthday"
               >
                 <DatePicker
+                  style={{ width: "100%" }}
                   onChange={(v) =>
                     handleChange(v.format("MM-DD-YYYY"), "birth_date")
                   }

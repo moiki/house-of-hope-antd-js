@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Table } from "antd";
 import moment from "moment";
 import randomIdForRow from "utils/TableKeygen";
 import { useScreenObserverHook } from "utils/ScreenObserverHook";
 import PatientCU from "./patientCU";
+import { useLazyQuery } from "@apollo/client";
+import { PatientListGQL } from "graphql/queries/patientsQueries";
+import { GraphError } from "components/MyAlert/GraphQlError";
 
 export default function PacientsManager() {
   const [loaded, setLoaded] = useState(false);
@@ -81,12 +84,29 @@ export default function PacientsManager() {
     },
   ];
 
+  const [fetchPatient, { loading: loadingPatient }] = useLazyQuery(
+    PatientListGQL,
+    {
+      onCompleted: (e) => {
+        setLocalData(e.result);
+      },
+      onError: (e) => {
+        GraphError(e);
+      },
+    }
+  );
   const handleEdit = (e) => {
     setIdPatient(e);
     handleModalPatient();
   };
+
+  useEffect(() => {
+    if (visible) {
+      fetchPatient();
+    }
+  }, [visible]);
   return (
-    <div>
+    <div ref={setRef}>
       <Button
         type="primary"
         shape="round"
@@ -98,14 +118,14 @@ export default function PacientsManager() {
       <Table
         pagination={{ position: ["bottomCenter"], pageSize: 6 }}
         columns={columns}
-        // loading={loadingInvitation || loadingDelete}
+        loading={loadingPatient}
         dataSource={localData}
         rowKey={() => randomIdForRow()}
       />
       {modalPatientState && (
         <PatientCU
           idPatient={idPatient}
-          // refetchPatients={refetchPatients}
+          refetchPatients={fetchPatient}
           handleCloseModal={handleClickClose}
           openModal={modalPatientState}
         />

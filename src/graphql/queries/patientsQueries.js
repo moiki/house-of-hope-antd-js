@@ -18,16 +18,13 @@ export const getPatientGQL = gql`
 `;
 
 export const PatientListGQL = gql`
-  query PatientList($id: String!) {
-    result: PatientList(id: $id) {
+  query PatientList {
+    result: PatientList {
       id
-      profile
-      first_name
-      last_name
-      address
-      country
-      state
+      name
+      birth_date
       city
+      address
       clinic
       gender
     }

@@ -6,7 +6,7 @@ export const GraphError = (e) =>
     "Error",
     <List
       dataSource={
-        e.graphQLErrors.length > 0
+        e.graphQLErrors?.length > 0
           ? e.graphQLErrors.map((v, i) => v.message)
           : [e.message]
       }

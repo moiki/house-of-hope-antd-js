@@ -7,7 +7,7 @@ export const CreateUpdatePatientGQL = gql`
     $last_name: String!
     $address: String!
     $profile: String
-    $birth_date: String!
+    $birth_date: DateTime!
     $country: String!
     $state: String
     $city: String
