@@ -33,9 +33,9 @@ export const CreateUpdatePatientGQL = gql`
   }
 `;
 
-export const deleteClinicGQL = gql`
-  mutation deleteClinic($id: String!) {
-    deleteClinic(id: $id) {
+export const deletePatientGQL = gql`
+  mutation deletePatient($id: String!) {
+    deletePatient(id: $id) {
       message
       status
     }
