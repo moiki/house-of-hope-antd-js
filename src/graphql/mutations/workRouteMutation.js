@@ -1,3 +1,5 @@
+import gql from "graphql-tag";
+
 export const createUpdateWorkRouteGQL = gql`
   mutation createUpdateWorkRoute(
     $id: String

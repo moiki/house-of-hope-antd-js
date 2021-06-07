@@ -4,11 +4,14 @@ import { Button, Popconfirm, Space, Table } from "antd";
 import moment from "moment";
 import randomIdForRow from "utils/TableKeygen";
 import { useScreenObserverHook } from "utils/ScreenObserverHook";
+import WorkRouteCU from "./workRouteCU";
 
 export default function RoutesManager() {
   const [loaded, setLoaded] = useState(false);
   const { setRef, visible } = useScreenObserverHook();
+  const [modalRoute, setModalRoute] = useState(false);
   const [localData, setLocalData] = useState([]);
+  const handleModal = () => setModalRoute(!modalRoute);
   const columns = [
     {
       title: "Route Name",
@@ -65,7 +68,7 @@ export default function RoutesManager() {
       <Button
         type="primary"
         shape="round"
-        // onClick={handleModalInvitation}
+        onClick={handleModal}
         icon={<PlusOutlined />}
       >
         Add New Route
@@ -77,6 +80,14 @@ export default function RoutesManager() {
         dataSource={localData}
         rowKey={() => randomIdForRow()}
       />
+      {modalRoute && (
+        <WorkRouteCU
+          idWorkRoute={null}
+          refetchWorkRoutes={() => {}}
+          handleCloseModal={handleModal}
+          openModal={modalRoute}
+        />
+      )}
     </div>
   );
 }

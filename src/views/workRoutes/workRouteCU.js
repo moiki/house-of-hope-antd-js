@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { BeatLoader } from "react-spinners";
 import ModalForm from "components/modalForm";
 import { Tabs, Select, Row, Col, Form, Input, Spin } from "antd";
@@ -21,13 +21,19 @@ import {
 } from "@ant-design/icons";
 import { getWorkRouteGQL } from "graphql/queries/workRouteQueries";
 import { createUpdateWorkRouteGQL } from "graphql/mutations/workRouteMutation";
+import workRouteSchema from "./workRouteSchema";
+import { MainStore } from "App";
+import ImageUploader from "components/uploaders/ImageUploader";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
 
 export default function WorkRouteCU(props) {
   const { openModal, handleCloseModal, idWorkRoute, refetchWorkRoutes } = props;
+  const { state } = useContext(MainStore);
+  const { clinics } = state;
   const countryList = csc.getAllCountries();
+  const [featuredImage, setFeaturedImage] = useState(null);
   const states = departments();
   const [cities, setCities] = useState([]);
   const [editorState, setEditorState] = useState(() =>
@@ -102,19 +108,19 @@ export default function WorkRouteCU(props) {
       address: values.address,
       phone_number: values.phone_number,
     };
-    if (idWorkRoute) {
-      executeUpdate({
-        variables: {
-          ...sbm,
-        },
-      });
-    } else {
-      executeCreate({
-        variables: {
-          ...sbm,
-        },
-      });
-    }
+    // if (idWorkRoute) {
+    //   executeUpdate({
+    //     variables: {
+    //       ...sbm,
+    //     },
+    //   });
+    // } else {
+    //   executeCreate({
+    //     variables: {
+    //       ...sbm,
+    //     },
+    //   });
+    // }
   };
 
   const onchangeDescription = (value) => {
@@ -129,7 +135,11 @@ export default function WorkRouteCU(props) {
     handleBlur,
     updateValues,
     // updateSchema,<RiHospitalLine className="anticon" />
-  } = useForm(submitForm, defaultValues, WorkRouteSchema);
+  } = useForm(submitForm, defaultValues, workRouteSchema);
+
+  const handleClinic = (e) => {
+    handleChange(e, "clinic");
+  };
 
   useEffect(() => {
     if (idWorkRoute) {
@@ -143,7 +153,7 @@ export default function WorkRouteCU(props) {
     <ModalForm
       openModal={openModal}
       width={600}
-      loading={loading || LoadingEdit}
+      loading={loading}
       title={
         <span style={{ display: "flex", alignItems: "center" }}>
           <RiHospitalLine
@@ -180,137 +190,65 @@ export default function WorkRouteCU(props) {
             >
               <Row gutter={[10]}>
                 <Col span={12}>
-                  <Form.Item
-                    validateStatus={errors.route_name ? "error" : "validating"}
-                    help={errors.route_name}
-                    label="Name of WorkRoute"
-                  >
-                    <Input
-                      id="route_name"
-                      name="route_name"
-                      autoComplete={"false"}
-                      onBlur={handleBlur}
-                      value={values.route_name}
-                      onChange={handleChange}
-                    />
-                  </Form.Item>
+                  <Row gutter={[16]}>
+                    <Col span={24}>
+                      <Form.Item
+                        validateStatus={
+                          errors.route_name ? "error" : "validating"
+                        }
+                        help={errors.route_name}
+                        label="Name of WorkRoute"
+                      >
+                        <Input
+                          id="route_name"
+                          name="route_name"
+                          autoComplete={"false"}
+                          onBlur={handleBlur}
+                          value={values.route_name}
+                          onChange={handleChange}
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                  <Row gutter={[16]}>
+                    <Col span={24}>
+                      <Form.Item
+                        validateStatus={errors.clinic ? "error" : "validating"}
+                        help={errors.clinic}
+                        label="Clinic"
+                      >
+                        <Select
+                          showSearch
+                          id="clinic"
+                          name="clinic"
+                          autoComplete={"false"}
+                          onBlur={handleBlur}
+                          value={values.clinic}
+                          onChange={(value) => {
+                            handleClinic(value);
+                          }}
+                          filterOption={(input, option) =>
+                            option.children
+                              .toLowerCase()
+                              .indexOf(input.toLowerCase()) >= 0
+                          }
+                        >
+                          {clinics &&
+                            clinics.map((v, i) => (
+                              <Option key={i} value={v.value}>
+                                {v.label}
+                              </Option>
+                            ))}
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                  </Row>
                 </Col>
-                <Col span={12}>
-                  <Form.Item
-                    validateStatus={
-                      errors.phone_number ? "error" : "validating"
-                    }
-                    help={errors.phone_number}
-                    label="Phone Number"
-                  >
-                    <Input
-                      id="phone_number"
-                      name="phone_number"
-                      autoComplete={"false"}
-                      onBlur={handleBlur}
-                      value={values.phone_number}
-                      onChange={handleChange}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={[10]}>
-                <Col span={12}>
-                  <Form.Item
-                    validateStatus={errors.country ? "error" : "validating"}
-                    help={errors.country}
-                    label="country"
-                  >
-                    <Input
-                      disabled
-                      id="country"
-                      name="country"
-                      autoComplete={"false"}
-                      onBlur={handleBlur}
-                      value={values.country || "Nicaragua"}
-                      onChange={handleChange}
-                    />
-                  </Form.Item>
-                </Col>{" "}
-                <Col span={12}>
-                  <Form.Item
-                    validateStatus={errors.state ? "error" : "validating"}
-                    help={errors.state}
-                    label="State/Dept"
-                  >
-                    <Select
-                      showSearch
-                      id="state"
-                      name="state"
-                      autoComplete={"false"}
-                      onBlur={handleBlur}
-                      value={values.state}
-                      onChange={(value) => {
-                        handleState(value);
-                      }}
-                      filterOption={(input, option) =>
-                        option.children
-                          .toLowerCase()
-                          .indexOf(input.toLowerCase()) >= 0
-                      }
-                    >
-                      {states &&
-                        states.map((v, i) => (
-                          <Option key={i} value={v.value}>
-                            {v.value}
-                          </Option>
-                        ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row gutter={[10]}>
-                <Col span={12}>
-                  <Form.Item
-                    validateStatus={errors.city ? "error" : "validating"}
-                    help={errors.city}
-                    label="Town/Comunity"
-                  >
-                    <Select
-                      showSearch
-                      id="city"
-                      name="city"
-                      autoComplete={"false"}
-                      onBlur={handleBlur}
-                      value={values.city}
-                      onChange={(value) => {
-                        handleChange(value, "city");
-                      }}
-                      filterOption={(input, option) =>
-                        option.children
-                          .toLowerCase()
-                          .indexOf(input.toLowerCase()) >= 0
-                      }
-                    >
-                      {cities &&
-                        cities.map((v, i) => (
-                          <Option key={i} value={v.value}>
-                            {v.value}
-                          </Option>
-                        ))}
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item
-                    validateStatus={errors.address ? "error" : "validating"}
-                    help={errors.address}
-                    label="Address"
-                  >
-                    <Input
-                      id="address"
-                      name="address"
-                      autoComplete={"false"}
-                      onBlur={handleBlur}
-                      value={values.address}
-                      onChange={handleChange}
-                    />
-                  </Form.Item>
+                <Col span={8}>
+                  <ImageUploader
+                    setImageValue={(v) => setFeaturedImage(v)}
+                    imageValue={featuredImage}
+                  />
                 </Col>
               </Row>
             </TabPane>
@@ -351,7 +289,82 @@ export default function WorkRouteCU(props) {
                 </span>
               }
               key="3"
-            ></TabPane>
+            >
+              <Row gutter={[10]}>
+                <Col span={18}>
+                  <Form.Item
+                    validateStatus={errors.city ? "error" : "validating"}
+                    help={errors.city}
+                    label="Work-Route Team"
+                  >
+                    <Select
+                      showSearch
+                      mode="multiple"
+                      allowClear
+                      style={{ width: "100%" }}
+                      placeholder="Please select"
+                      id="city"
+                      name="city"
+                      autoComplete={"false"}
+                      onBlur={handleBlur}
+                      value={values.city}
+                      onChange={(value) => {
+                        handleChange(value, "city");
+                      }}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      {cities &&
+                        cities.map((v, i) => (
+                          <Option key={i} value={v.value}>
+                            {v.value}
+                          </Option>
+                        ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={[10]}>
+                <Col span={18}>
+                  <Form.Item
+                    validateStatus={errors.patients ? "error" : "validating"}
+                    help={errors.patients}
+                    label="Patients Attended"
+                  >
+                    <Select
+                      mode="multiple"
+                      allowClear
+                      style={{ width: "100%" }}
+                      placeholder="Please select"
+                      showSearch
+                      id="patients"
+                      name="patients"
+                      autoComplete={"false"}
+                      onBlur={handleBlur}
+                      // value={values.patients}
+                      onChange={(value) => {
+                        // handlepatients(value);
+                      }}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      {states &&
+                        states.map((v, i) => (
+                          <Option key={i} value={v.value}>
+                            {v.value}
+                          </Option>
+                        ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+            </TabPane>
           </Tabs>
         </Form>
       </Spin>
