@@ -1,113 +1,15 @@
-import React, { useEffect, useState, useContext } from "react";
+import React from "react";
 import { BeatLoader } from "react-spinners";
 import ModalForm from "components/modalForm";
 import { Select, Row, Col, Form, Input, Spin, DatePicker } from "antd";
-import { useLazyQuery, useMutation } from "@apollo/react-hooks";
-import AlertMessage from "components/MyAlert/Alert";
-import useForm from "utils/useForm/UseForm";
-import csc from "country-state-city";
-import { departments } from "utils/NationalCitiesHandler";
-import { comunities } from "utils/NationalCitiesHandler";
-import { GraphError } from "components/MyAlert/GraphQlError";
 import { MedicineBoxOutlined, UserOutlined } from "@ant-design/icons";
-import { CreateUpdatePatientGQL } from "graphql/mutations/patientMutation";
 import ImageUploader from "components/uploaders/ImageUploader";
-import { MainStore } from "App";
-import { getPatientGQL } from "graphql/queries/patientsQueries";
-import patientSchema from "./patientSchema";
+import { useCrudPatientService } from "./patientService";
 
 const { Option } = Select;
 
 export default function PatientCU(props) {
-  const { state } = useContext(MainStore);
-  const { clinics } = state;
   const { openModal, handleCloseModal, idPatient, refetchPatients } = props;
-  const countryList = csc.getAllCountries();
-  const states = departments();
-  const [cities, setCities] = useState([]);
-  const [imageEmployee, setImageEmployee] = useState(null);
-  const handleState = (e) => {
-    const states = comunities(e);
-    handleChange(e, "state");
-    setCities(states);
-  };
-
-  const handleclinic = (e) => {
-    handleChange(e, "clinic");
-  };
-
-  const [fetchPatient, { loading: loadingFetch }] = useLazyQuery(
-    getPatientGQL,
-    {
-      onCompleted: (e) => {
-        const res = e.result;
-        updateValues({
-          first_name: res.first_name,
-          last_name: res.last_name,
-          clinic: res.clinic,
-          profile: res.profile,
-          address: res.address,
-          country: res.country,
-          state: res.state,
-          city: res.city,
-          gender: res.gender,
-        });
-      },
-      onError: (e) => {
-        handleCloseModal();
-        GraphError(e);
-      },
-    }
-  );
-  const [executeCreateUpdate, { loading }] = useMutation(
-    CreateUpdatePatientGQL,
-    {
-      onCompleted: (e) => {
-        refetchPatients();
-        AlertMessage(
-          "Completed!",
-          <span>Employee Created Successfully!</span>,
-          "success"
-        );
-        handleCloseModal();
-      },
-      onError: (e) => {
-        GraphError(e);
-      },
-    }
-  );
-
-  const defaultValues = {
-    first_name: "",
-    last_name: "",
-    clinic: "",
-    birth_date: "",
-    gender: "",
-    address: "",
-    country: "Nicaragua",
-    state: "",
-    city: "",
-  };
-  const submitForm = async () => {
-    const sbm = {
-      id: idPatient,
-      profile: null,
-      first_name: values.first_name,
-      last_name: values.last_name,
-      clinic: values.clinic,
-      birth_date: values.birth_date,
-      gender: values.gender,
-      address: values.address,
-      country: "Nicaragua",
-      state: values.state,
-      city: values.city,
-    };
-    executeCreateUpdate({
-      variables: {
-        ...sbm,
-      },
-    });
-  };
 
   const {
     values,
@@ -115,24 +17,16 @@ export default function PatientCU(props) {
     handleChange,
     handleSubmit,
     handleBlur,
-    updateValues,
-    // updateSchema,<RiHospitalLine className="anticon" />
-  } = useForm(submitForm, defaultValues, patientSchema);
-
-  useEffect(() => {
-    if (idPatient) {
-      fetchPatient({
-        variables: { id: idPatient },
-      });
-    }
-  }, [idPatient]);
-
-  useEffect(() => {
-    if (errors) {
-      console.log(errors);
-    }
-  }, [errors]);
-
+    loading,
+    loadingFetch,
+    clinics,
+    states,
+    cities,
+    handleclinic,
+    setImageEmployee,
+    handleState,
+    imageEmployee,
+  } = useCrudPatientService(handleCloseModal, idPatient, refetchPatients);
   return (
     <ModalForm
       openModal={openModal}

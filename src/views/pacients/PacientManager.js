@@ -1,110 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Popconfirm, Space, Table } from "antd";
-import moment from "moment";
+import React from "react";
+import { PlusOutlined } from "@ant-design/icons";
+import { Button, Table } from "antd";
 import randomIdForRow from "utils/TableKeygen";
-import { useScreenObserverHook } from "utils/ScreenObserverHook";
 import PatientCU from "./patientCU";
-import { useLazyQuery } from "@apollo/client";
-import { PatientListGQL } from "graphql/queries/patientsQueries";
-import { GraphError } from "components/MyAlert/GraphQlError";
+import { usePatientService } from "./patientService";
 
 export default function PacientsManager() {
-  const [loaded, setLoaded] = useState(false);
-  const [idPatient, setIdPatient] = useState(null);
-  const { setRef, visible } = useScreenObserverHook();
-  const [localData, setLocalData] = useState([]);
-  const [modalPatientState, setModalPatientState] = useState(false);
-  const handleModalPatient = () => setModalPatientState(!modalPatientState);
-  const handleClickClose = () => {
-    handleModalPatient();
-    if (idPatient) {
-      setIdPatient(null);
-    }
-  };
-  const columns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Registration Date",
-      dataIndex: "created_date",
-      key: "created_date",
-      render: (text) => <span>{moment(text).format("MMM Do, YYYY")}</span>,
-    },
-    {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-    },
-    {
-      title: "City",
-      dataIndex: "city",
-      key: "city",
-    },
-    {
-      title: "Clinic",
-      dataIndex: "clinic",
-      key: "clinic",
-    },
-    {
-      title: "Action",
-      dataIndex: "id",
-      key: "id",
-      render: (text) => (
-        <Space size="middle">
-          <Button
-            type="ghost"
-            shape="round"
-            className="ant-btn-info"
-            onClick={() => handleEdit(text)}
-            icon={<EditOutlined />}
-          >
-            Edit
-          </Button>
-          <Popconfirm
-            placement="top"
-            title={"Are you sure to delete this Patient?"}
-            // onConfirm={() => handleDelete(text)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button
-              icon={<DeleteOutlined />}
-              shape="round"
-              className="ant-btn-danger"
-            >
-              Delete
-            </Button>
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
-
-  const [fetchPatient, { loading: loadingPatient }] = useLazyQuery(
-    PatientListGQL,
-    {
-      onCompleted: (e) => {
-        setLocalData(e.result);
-      },
-      onError: (e) => {
-        GraphError(e);
-      },
-    }
-  );
-  const handleEdit = (e) => {
-    setIdPatient(e);
-    handleModalPatient();
-  };
-
-  useEffect(() => {
-    if (visible) {
-      fetchPatient();
-    }
-  }, [visible]);
+  const {
+    setRef,
+    modalPatientState,
+    handleModalPatient,
+    loadingPatient,
+    idPatient,
+    handleClickClose,
+    localData,
+    columns,
+    fetchPatient,
+  } = usePatientService();
   return (
     <div ref={setRef}>
       <Button

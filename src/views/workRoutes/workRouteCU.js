@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { BeatLoader } from "react-spinners";
 import ModalForm from "components/modalForm";
-import { Tabs, Select, Row, Col, Form, Input, Spin } from "antd";
+import { Tabs, Select, Row, Col, Form, Input, Spin, Button } from "antd";
 import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import AlertMessage from "components/MyAlert/Alert";
 
@@ -17,6 +17,7 @@ import { convertToHTML, convertFromHTML } from "draft-convert";
 import {
   FileTextOutlined,
   MenuOutlined,
+  PlusOutlined,
   UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { getWorkRouteGQL } from "graphql/queries/workRouteQueries";
@@ -188,7 +189,7 @@ export default function WorkRouteCU(props) {
               }
               key="1"
             >
-              <Row gutter={[10]}>
+              <Row gutter={[10]} justify="space-between">
                 <Col span={12}>
                   <Row gutter={[16]}>
                     <Col span={24}>
@@ -251,44 +252,40 @@ export default function WorkRouteCU(props) {
                   />
                 </Col>
               </Row>
+              <Row style={{ marginTop: 5 }}>
+                <span>Description</span>
+                <Col span={24}>
+                  <Editor
+                    editorState={editorState}
+                    editorStyle={{
+                      width: "100%",
+                      height: "30vh",
+                      overflow: "hidden",
+                    }}
+                    wrapperClassName="wrapper-class"
+                    editorClassName="editor-class"
+                    toolbarClassName="toolbar-class"
+                    toolbar={{
+                      inline: { inDropdown: true },
+                      list: { inDropdown: true },
+                      textAlign: { inDropdown: true },
+                      link: { inDropdown: true },
+                      history: { inDropdown: true },
+                    }}
+                    onEditorStateChange={onchangeDescription}
+                  />
+                </Col>
+              </Row>
             </TabPane>
-            <TabPane
-              tab={
-                <span>
-                  <FileTextOutlined />
-                  Description
-                </span>
-              }
-              key="2"
-            >
-              <Editor
-                editorState={editorState}
-                editorStyle={{
-                  width: "100%",
-                  height: "30vh",
-                  overflow: "hidden",
-                }}
-                wrapperClassName="wrapper-class"
-                editorClassName="editor-class"
-                toolbarClassName="toolbar-class"
-                toolbar={{
-                  inline: { inDropdown: true },
-                  list: { inDropdown: true },
-                  textAlign: { inDropdown: true },
-                  link: { inDropdown: true },
-                  history: { inDropdown: true },
-                }}
-                onEditorStateChange={onchangeDescription}
-              />
-            </TabPane>
+
             <TabPane
               tab={
                 <span>
                   <UsergroupAddOutlined />
-                  Employees
+                  Work Organization
                 </span>
               }
-              key="3"
+              key="2"
             >
               <Row gutter={[10]}>
                 <Col span={18}>
@@ -345,6 +342,59 @@ export default function WorkRouteCU(props) {
                       autoComplete={"false"}
                       onBlur={handleBlur}
                       // value={values.patients}
+                      onChange={(value) => {
+                        // handlepatients(value);
+                      }}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      {states &&
+                        states.map((v, i) => (
+                          <Option key={i} value={v.value}>
+                            {v.value}
+                          </Option>
+                        ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={[10]}>
+                <Col span={18}>
+                  <Form.Item
+                    validateStatus={
+                      errors.destinations ? "error" : "validating"
+                    }
+                    help={errors.destinations}
+                    label={
+                      <span>
+                        Destination{" "}
+                        <Button
+                          type="ghost"
+                          size="small"
+                          shape="round"
+                          className="ant-btn-info"
+                          onClick={() => {}}
+                          icon={<PlusOutlined />}
+                        >
+                          Add New
+                        </Button>
+                      </span>
+                    }
+                  >
+                    <Select
+                      mode="multiple"
+                      allowClear
+                      style={{ width: "100%" }}
+                      placeholder="Please select"
+                      showSearch
+                      id="destinations"
+                      name="destinations"
+                      autoComplete={"false"}
+                      onBlur={handleBlur}
+                      // value={values.destinations}
                       onChange={(value) => {
                         // handlepatients(value);
                       }}
