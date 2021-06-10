@@ -13,6 +13,7 @@ export const getPatientGQL = gql`
       city
       clinic
       gender
+      birth_date
     }
   }
 `;

@@ -25,6 +25,7 @@ import { createUpdateWorkRouteGQL } from "graphql/mutations/workRouteMutation";
 import workRouteSchema from "./workRouteSchema";
 import { MainStore } from "App";
 import ImageUploader from "components/uploaders/ImageUploader";
+import NewDestinationCU from "./NewDestinationCU";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -40,7 +41,8 @@ export default function WorkRouteCU(props) {
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
-
+  const [destinationModal, setDestinationModal] = useState(false);
+  const handleDestination = () => setDestinationModal(!destinationModal);
   const handleState = (e) => {
     const states = comunities(e);
     handleChange(e, "state");
@@ -376,7 +378,7 @@ export default function WorkRouteCU(props) {
                           size="small"
                           shape="round"
                           className="ant-btn-info"
-                          onClick={() => {}}
+                          onClick={handleDestination}
                           icon={<PlusOutlined />}
                         >
                           Add New
@@ -418,6 +420,12 @@ export default function WorkRouteCU(props) {
           </Tabs>
         </Form>
       </Spin>
+      {destinationModal && (
+        <NewDestinationCU
+          openModal={destinationModal}
+          handleCloseModal={handleDestination}
+        />
+      )}
     </ModalForm>
   );
 }

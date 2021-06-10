@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 import { Button, Popconfirm, Space } from "antd";
-import AlertMessage from "components/MyAlert/Alert";
 import { GraphError } from "components/MyAlert/GraphQlError";
 import { PatientListGQL } from "graphql/queries/patientsQueries";
 import { departments } from "utils/NationalCitiesHandler";
@@ -14,9 +13,10 @@ import patientSchema from "../patientSchema";
 import { CreateUpdatePatientGQL } from "graphql/mutations/patientMutation";
 import { getPatientGQL } from "graphql/queries/patientsQueries";
 import { MainStore } from "App";
+import { useCreateUpdateDelete } from "utils/globalServices/crudServices";
+import { useGet } from "utils/globalServices/crudServices";
 
 export const usePatientService = () => {
-  const [loaded, setLoaded] = useState(false);
   const [idPatient, setIdPatient] = useState(null);
   const { setRef, visible } = useScreenObserverHook();
   const [localData, setLocalData] = useState([]);
@@ -147,46 +147,36 @@ export const useCrudPatientService = (
     handleChange(e, "clinic");
   };
 
-  const [fetchPatient, { loading: loadingFetch }] = useLazyQuery(
-    getPatientGQL,
-    {
-      onCompleted: (e) => {
-        const res = e.result;
-        updateValues({
-          first_name: res.first_name,
-          last_name: res.last_name,
-          clinic: res.clinic,
-          profile: res.profile,
-          address: res.address,
-          country: res.country,
-          state: res.state,
-          city: res.city,
-          gender: res.gender,
-        });
-      },
-      onError: (e) => {
-        handleCloseModal();
-        GraphError(e);
-      },
-    }
-  );
-  const [executeCreateUpdate, { loading }] = useMutation(
-    CreateUpdatePatientGQL,
-    {
-      onCompleted: (e) => {
-        refetchPatients();
-        AlertMessage(
-          "Completed!",
-          <span>Employee Created Successfully!</span>,
-          "success"
-        );
-        handleCloseModal();
-      },
-      onError: (e) => {
-        GraphError(e);
-      },
-    }
-  );
+  const onCompleted = (e) => {
+    const res = e.result;
+    updateValues({
+      first_name: res.first_name,
+      last_name: res.last_name,
+      clinic: res.clinic,
+      profile: res.profile,
+      address: res.address,
+      country: res.country,
+      birth_date: res.birth_date,
+      state: res.state,
+      city: res.city,
+      gender: res.gender,
+    });
+  };
+  const succeeded = () => {
+    refetchPatients();
+    handleCloseModal();
+  };
+
+  const { fetch: fetchPatient, loading: loadingFetch } = useGet({
+    query: getPatientGQL,
+    onSuccess: onCompleted,
+    onError: handleCloseModal,
+  });
+  const { submitGql: executeCreateUpdate, loading } = useCreateUpdateDelete({
+    query: CreateUpdatePatientGQL,
+    onSuccess: succeeded,
+    type: idPatient ? "UPDATE" : "CREATE",
+  });
 
   const defaultValues = {
     first_name: "",
@@ -213,11 +203,7 @@ export const useCrudPatientService = (
       state: values.state,
       city: values.city,
     };
-    executeCreateUpdate({
-      variables: {
-        ...sbm,
-      },
-    });
+    executeCreateUpdate(sbm);
   };
 
   const {
@@ -232,9 +218,7 @@ export const useCrudPatientService = (
 
   useEffect(() => {
     if (idPatient) {
-      fetchPatient({
-        variables: { id: idPatient },
-      });
+      fetchPatient({ id: idPatient });
     }
   }, [idPatient]);
 

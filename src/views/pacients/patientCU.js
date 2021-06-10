@@ -5,6 +5,7 @@ import { Select, Row, Col, Form, Input, Spin, DatePicker } from "antd";
 import { MedicineBoxOutlined, UserOutlined } from "@ant-design/icons";
 import ImageUploader from "components/uploaders/ImageUploader";
 import { useCrudPatientService } from "./patientService";
+import moment from "moment";
 
 const { Option } = Select;
 
@@ -177,6 +178,7 @@ export default function PatientCU(props) {
               >
                 <DatePicker
                   style={{ width: "100%" }}
+                  value={moment(values.birth_date)}
                   onChange={(v) =>
                     handleChange(v.format("MM-DD-YYYY"), "birth_date")
                   }
