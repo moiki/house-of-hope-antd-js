@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Col, Input, Row } from "antd";
-import Form from "antd/lib/form/Form";
+import { Col, Input, Row, Form } from "antd";
 import ModalForm from "components/modalForm";
 import useForm from "utils/useForm/UseForm";
 import csc from "country-state-city";
 import { departments } from "utils/NationalCitiesHandler";
 import { RiHospitalLine } from "react-icons/ri";
+import { useDestinationCrud } from "./services/workRouteServices";
 
 export default function NewDestinationCU({
   openModal,
@@ -13,21 +13,6 @@ export default function NewDestinationCU({
   idWorkRoute,
   refetchDestination,
 }) {
-  const countryList = csc.getAllCountries();
-  const [featuredImage, setFeaturedImage] = useState(null);
-  const states = departments();
-  const [cities, setCities] = useState([]);
-  const defaultValues = {
-    id: null,
-    destination_name: null,
-    description: null,
-    picture: null,
-    clinic: null,
-    country: null,
-    city: null,
-    state: null,
-    google_map_url: null,
-  };
   const {
     values,
     errors,
@@ -35,8 +20,10 @@ export default function NewDestinationCU({
     handleSubmit,
     handleBlur,
     updateValues,
-    // updateSchema,<RiHospitalLine className="anticon" />
-  } = useForm(() => {}, defaultValues, {});
+    featuredImage,
+    setFeaturedImage,
+    states,
+  } = useDestinationCrud();
   return (
     <ModalForm
       openModal={openModal}
@@ -57,7 +44,7 @@ export default function NewDestinationCU({
       handleSubmit={handleSubmit}
     >
       <Row gutter={[10]}>
-        <Col span={22}>
+        <Col span={20}>
           <Form.Item
             validateStatus={errors.destination_name ? "error" : "validating"}
             help={errors.destination_name}
@@ -75,7 +62,7 @@ export default function NewDestinationCU({
         </Col>
       </Row>
       <Row gutter={[10]}>
-        <Col span={22}>
+        <Col span={20}>
           <Form.Item
             validateStatus={errors.description ? "error" : "validating"}
             help={errors.description}
@@ -93,7 +80,7 @@ export default function NewDestinationCU({
         </Col>
       </Row>
       <Row gutter={[10]}>
-        <Col span={12}>
+        <Col span={20}>
           <Form.Item
             validateStatus={errors.google_map_url ? "error" : "validating"}
             help={errors.google_map_url}

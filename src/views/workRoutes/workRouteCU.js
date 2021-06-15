@@ -1,160 +1,66 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useState } from "react";
 import { BeatLoader } from "react-spinners";
 import ModalForm from "components/modalForm";
-import { Tabs, Select, Row, Col, Form, Input, Spin, Button } from "antd";
-import { useLazyQuery, useMutation } from "@apollo/react-hooks";
-import AlertMessage from "components/MyAlert/Alert";
-
+import {
+  Tabs,
+  Select,
+  Row,
+  Col,
+  Form,
+  Input,
+  Spin,
+  Button,
+  Card,
+  Tag,
+} from "antd";
 import { RiHospitalLine } from "react-icons/ri";
-import useForm from "utils/useForm/UseForm";
 import csc from "country-state-city";
 import { departments } from "utils/NationalCitiesHandler";
-import { comunities } from "utils/NationalCitiesHandler";
-import { GraphError } from "components/MyAlert/GraphQlError";
-import { EditorState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
-import { convertToHTML, convertFromHTML } from "draft-convert";
 import {
-  FileTextOutlined,
   MenuOutlined,
   PlusOutlined,
   UsergroupAddOutlined,
 } from "@ant-design/icons";
-import { getWorkRouteGQL } from "graphql/queries/workRouteQueries";
-import { createUpdateWorkRouteGQL } from "graphql/mutations/workRouteMutation";
-import workRouteSchema from "./workRouteSchema";
-import { MainStore } from "App";
 import ImageUploader from "components/uploaders/ImageUploader";
 import NewDestinationCU from "./NewDestinationCU";
+import { useWorkRouteService } from "./services/workRouteServices";
+import { comunities } from "utils/NationalCitiesHandler";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
 
 export default function WorkRouteCU(props) {
-  const { openModal, handleCloseModal, idWorkRoute, refetchWorkRoutes } = props;
-  const { state } = useContext(MainStore);
-  const { clinics } = state;
-  const countryList = csc.getAllCountries();
   const [featuredImage, setFeaturedImage] = useState(null);
-  const states = departments();
-  const [cities, setCities] = useState([]);
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty()
-  );
   const [destinationModal, setDestinationModal] = useState(false);
   const handleDestination = () => setDestinationModal(!destinationModal);
+  const countryList = csc.getAllCountries();
+
+  const states = departments();
+  const [cities, setCities] = useState([]);
   const handleState = (e) => {
     const states = comunities(e);
     handleChange(e, "state");
     setCities(states);
   };
-  const [fetchWorkRoute, { loading: loadingFetch }] = useLazyQuery(
-    getWorkRouteGQL,
-    {
-      onCompleted: (e) => {
-        const res = e.result;
-        setEditorState(
-          EditorState.createWithContent(convertFromHTML(res.description))
-        );
-        // debugger;
-        updateValues({
-          id: res.id,
-          route_name: res.route_name,
-          description: res.description,
-          featured_image: res.featured_image,
-          clinic: res.clinic,
-          employees: res.employees,
-          patients: res.patients,
-          destinations: res.destinations,
-        });
-      },
-      onError: (e) => {
-        handleCloseModal();
-        GraphError(e);
-      },
-    }
-  );
-  const [executeCreate, { loading }] = useMutation(createUpdateWorkRouteGQL, {
-    onCompleted: (e) => {
-      refetchWorkRoutes();
-      AlertMessage(
-        "Completed!",
-        <span>WorkRoute Created Successfully!</span>,
-        "success"
-      );
-      handleCloseModal();
-    },
-    onError: (e) => {
-      GraphError(e);
-    },
-  });
-
-  const defaultValues = {
-    id: null,
-    route_name: null,
-    description: null,
-    featured_image: null,
-    clinic: null,
-    employees: null,
-    patients: null,
-    destinations: null,
-  };
-  const submitForm = async () => {
-    const descHtml = convertToHTML(editorState.getCurrentContent());
-    const sbm = {
-      id: idWorkRoute,
-      name: values.name,
-      description: descHtml,
-      country: values.country,
-      state: values.state,
-      city: values.city,
-      address: values.address,
-      phone_number: values.phone_number,
-    };
-    // if (idWorkRoute) {
-    //   executeUpdate({
-    //     variables: {
-    //       ...sbm,
-    //     },
-    //   });
-    // } else {
-    //   executeCreate({
-    //     variables: {
-    //       ...sbm,
-    //     },
-    //   });
-    // }
-  };
-
-  const onchangeDescription = (value) => {
-    setEditorState(value);
-  };
-
   const {
     values,
     errors,
     handleChange,
     handleSubmit,
     handleBlur,
-    updateValues,
-    // updateSchema,<RiHospitalLine className="anticon" />
-  } = useForm(submitForm, defaultValues, workRouteSchema);
-
-  const handleClinic = (e) => {
-    handleChange(e, "clinic");
-  };
-
-  useEffect(() => {
-    if (idWorkRoute) {
-      fetchWorkRoute({
-        variables: { id: idWorkRoute },
-      });
-    }
-  }, [idWorkRoute]);
-
+    loading,
+    onchangeDescription,
+    loadingFetch,
+    handleClinic,
+    clinics,
+    editorState,
+    destinations,
+    setDestinations,
+  } = useWorkRouteService(props);
   return (
     <ModalForm
-      openModal={openModal}
+      openModal={props.openModal}
       width={600}
       loading={loading}
       title={
@@ -168,7 +74,7 @@ export default function WorkRouteCU(props) {
         </span>
       }
       style={{ top: 20 }}
-      handleClose={handleCloseModal}
+      handleClose={props.handleCloseModal}
       handleSubmit={handleSubmit}
     >
       <Spin
@@ -386,33 +292,13 @@ export default function WorkRouteCU(props) {
                       </span>
                     }
                   >
-                    <Select
-                      mode="multiple"
-                      allowClear
-                      style={{ width: "100%" }}
-                      placeholder="Please select"
-                      showSearch
-                      id="destinations"
-                      name="destinations"
-                      autoComplete={"false"}
-                      onBlur={handleBlur}
-                      // value={values.destinations}
-                      onChange={(value) => {
-                        // handlepatients(value);
-                      }}
-                      filterOption={(input, option) =>
-                        option.children
-                          .toLowerCase()
-                          .indexOf(input.toLowerCase()) >= 0
-                      }
-                    >
-                      {states &&
-                        states.map((v, i) => (
-                          <Option key={i} value={v.value}>
-                            {v.value}
-                          </Option>
-                        ))}
-                    </Select>
+                    <Card color="success">
+                      {destinations?.length > 0
+                        ? destinations.map((item) => {
+                            return <Tag color="magenta">{item.name}</Tag>;
+                          })
+                        : null}
+                    </Card>
                   </Form.Item>
                 </Col>
               </Row>
