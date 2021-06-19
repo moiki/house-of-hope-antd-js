@@ -30,7 +30,7 @@ const schema = {
     "any.required": "Google Map Url is required",
     "string.empty": "Google Map Url is required",
   }),
-  picture: Joi.string().required().label("First name").messages({
+  picture: Joi.string().allow(null).label("First name").messages({
     "string.base": "Google Map Url is required",
     "any.required": "Google Map Url is required",
     "string.empty": "Google Map Url is required",
@@ -189,7 +189,7 @@ export function useWorkRouteService(props) {
   };
 }
 
-export function useDestinationCrud() {
+export function useDestinationCrud({ create = () => {} }) {
   const countryList = csc.getAllCountries();
   const [featuredImage, setFeaturedImage] = useState(null);
   const states = departments();
@@ -205,6 +205,15 @@ export function useDestinationCrud() {
     state: null,
     google_map_url: null,
   };
+
+  const lcCreate = () => {
+    const data = {
+      destination_name: values.destination_name,
+      description: values.description,
+      google_map_url: values.google_map_url,
+    };
+    create(data);
+  };
   const {
     values,
     errors,
@@ -213,7 +222,7 @@ export function useDestinationCrud() {
     handleBlur,
     updateValues,
     // updateSchema,<RiHospitalLine className="anticon" />
-  } = useForm(() => {}, defaultValues, schema);
+  } = useForm(lcCreate, defaultValues, schema);
 
   return {
     values,

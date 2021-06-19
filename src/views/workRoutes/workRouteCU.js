@@ -26,6 +26,7 @@ import ImageUploader from "components/uploaders/ImageUploader";
 import NewDestinationCU from "./NewDestinationCU";
 import { useWorkRouteService } from "./services/workRouteServices";
 import { comunities } from "utils/NationalCitiesHandler";
+import { remove } from "lodash";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -58,6 +59,21 @@ export default function WorkRouteCU(props) {
     destinations,
     setDestinations,
   } = useWorkRouteService(props);
+
+  const addDestination = (data) => {
+    if (
+      !destinations.some(
+        (dest) => dest.destination_name === data.destination_name
+      )
+    ) {
+      setDestinations([...destinations, data]);
+    }
+  };
+  const removeDestination = (id) => {
+    let remain = destinations.map((v) => v);
+    remove(remain, (item) => item.destination_name === id);
+    setDestinations(remain);
+  };
   return (
     <ModalForm
       openModal={props.openModal}
@@ -295,7 +311,20 @@ export default function WorkRouteCU(props) {
                     <Card color="success">
                       {destinations?.length > 0
                         ? destinations.map((item) => {
-                            return <Tag color="magenta">{item.name}</Tag>;
+                            return (
+                              <span>
+                                <Tag
+                                  color="geekblue"
+                                  closable
+                                  onClose={(e) => {
+                                    e.preventDefault();
+                                    removeDestination(item.destination_name);
+                                  }}
+                                >
+                                  {item.destination_name}
+                                </Tag>
+                              </span>
+                            );
                           })
                         : null}
                     </Card>
@@ -310,6 +339,7 @@ export default function WorkRouteCU(props) {
         <NewDestinationCU
           openModal={destinationModal}
           handleCloseModal={handleDestination}
+          addDestination={addDestination}
         />
       )}
     </ModalForm>

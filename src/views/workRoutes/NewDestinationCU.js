@@ -12,6 +12,7 @@ export default function NewDestinationCU({
   handleCloseModal,
   idWorkRoute,
   refetchDestination,
+  addDestination,
 }) {
   const {
     values,
@@ -23,7 +24,7 @@ export default function NewDestinationCU({
     featuredImage,
     setFeaturedImage,
     states,
-  } = useDestinationCrud();
+  } = useDestinationCrud({ create: addDestination });
   return (
     <ModalForm
       openModal={openModal}

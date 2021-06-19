@@ -16,14 +16,12 @@ import csc from "country-state-city";
 import { departments } from "utils/NationalCitiesHandler";
 import { comunities } from "utils/NationalCitiesHandler";
 import { GraphError } from "components/MyAlert/GraphQlError";
-import { EditorState } from "draft-js";
-import { Editor } from "react-draft-wysiwyg";
-import { convertToHTML, convertFromHTML } from "draft-convert";
 import {
   FileTextOutlined,
   MenuOutlined,
   UsergroupAddOutlined,
 } from "@ant-design/icons";
+import FroalaEditorComponent from "react-froala-wysiwyg";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -33,10 +31,8 @@ export default function ClinicCU(props) {
   const countryList = csc.getAllCountries();
   const states = departments();
   const [cities, setCities] = useState([]);
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty()
-  );
 
+  const [froalaEditorData, setFroalaEditorData] = useState("");
   const handleState = (e) => {
     const states = comunities(e);
     handleChange(e, "state");
@@ -45,9 +41,8 @@ export default function ClinicCU(props) {
   const [fetchClinic, { loading: loadingFetch }] = useLazyQuery(getClinicGQL, {
     onCompleted: (e) => {
       const res = e.result;
-      setEditorState(
-        EditorState.createWithContent(convertFromHTML(res.description))
-      );
+
+      setFroalaEditorData(res.description);
       // debugger;
       updateValues({
         id: res.id,
@@ -121,11 +116,10 @@ export default function ClinicCU(props) {
     city: "",
   };
   const submitForm = async () => {
-    const descHtml = convertToHTML(editorState.getCurrentContent());
     const sbm = {
       id: idClinic,
       name: values.name,
-      description: descHtml,
+      description: froalaEditorData,
       country: values.country,
       state: values.state,
       city: values.city,
@@ -145,10 +139,6 @@ export default function ClinicCU(props) {
         },
       });
     }
-  };
-
-  const onchangeDescription = (value) => {
-    setEditorState(value);
   };
 
   const {
@@ -353,24 +343,10 @@ export default function ClinicCU(props) {
               }
               key="2"
             >
-              <Editor
-                editorState={editorState}
-                editorStyle={{
-                  width: "100%",
-                  height: "30vh",
-                  overflow: "hidden",
-                }}
-                wrapperClassName="wrapper-class"
-                editorClassName="editor-class"
-                toolbarClassName="toolbar-class"
-                toolbar={{
-                  inline: { inDropdown: true },
-                  list: { inDropdown: true },
-                  textAlign: { inDropdown: true },
-                  link: { inDropdown: true },
-                  history: { inDropdown: true },
-                }}
-                onEditorStateChange={onchangeDescription}
+              <FroalaEditorComponent
+                tag="textarea"
+                model={froalaEditorData}
+                onModelChange={(value) => setFroalaEditorData(value)}
               />
             </TabPane>
             <TabPane

@@ -6,6 +6,7 @@ import Home from "views/home";
 import ManagementView from "views/management";
 import PacientsView from "views/pacients";
 import PacientsManager from "views/pacients/PacientManager";
+import PatientDetails from "views/pacients/PatientDetails";
 import RoutesView from "views/workRoutes";
 import RoutesCalendar from "views/workRoutes/RoutesCalendar";
 import RoutesManager from "views/workRoutes/RoutesManager";
@@ -136,6 +137,20 @@ const MainPagesList = [
     icon: null,
     layout: "admin",
     component: ClinicDetails,
+    allowedRoles: [
+      "Root",
+      "Administrator",
+      "Local Member",
+      "Support Doctor",
+      "Sponsor",
+    ],
+  },
+  {
+    title: "Patient Details",
+    path: "patients/details",
+    icon: null,
+    layout: "admin",
+    component: PatientDetails,
     allowedRoles: [
       "Root",
       "Administrator",

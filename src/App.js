@@ -9,6 +9,14 @@ import { ApolloProvider } from "@apollo/react-hooks";
 import AuthLayout from "layout/auth/AuthLayout";
 import Login from "views/auth/Login";
 import SignUpView from "views/signup";
+
+// Require Editor CSS files.
+import "froala-editor/css/froala_style.min.css";
+import "froala-editor/css/froala_editor.pkgd.min.css";
+import "froala-editor/js/plugins.pkgd.min.js";
+import "froala-editor/js/third_party/image_tui.min.js";
+import "froala-editor/js/third_party/embedly.min.js";
+// import 'froala-editor/js/third_party/spell_checker.min.js';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 export const MainStore = createContext();
 export const hist = createBrowserHistory();
