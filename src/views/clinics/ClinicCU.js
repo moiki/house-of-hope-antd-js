@@ -349,15 +349,6 @@ export default function ClinicCU(props) {
                 onModelChange={(value) => setFroalaEditorData(value)}
               />
             </TabPane>
-            <TabPane
-              tab={
-                <span>
-                  <UsergroupAddOutlined />
-                  Employees
-                </span>
-              }
-              key="3"
-            ></TabPane>
           </Tabs>
         </Form>
       </Spin>
