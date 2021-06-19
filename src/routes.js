@@ -32,10 +32,10 @@ const routes = [
         layout: "admin",
         allowedRoles: [
           "Root",
-          "Administrator",
-          "Local Member",
-          "Support Doctor",
-          "Sponsor",
+          // "Administrator",
+          // "Local Member",
+          // "Support Doctor",
+          // "Sponsor",
         ],
       },
       {
