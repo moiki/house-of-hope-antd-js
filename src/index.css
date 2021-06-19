@@ -59,6 +59,12 @@ body {
   color: #fff;
 }
 
+.ant-btn-bk {
+  background-color: #2c422f !important;
+  border-color: none;
+  color: #fff;
+}
+
 .ant-btn-primary:hover {
   background-color: #267e8d !important;
   color: #fff;

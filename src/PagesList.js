@@ -133,7 +133,7 @@ const MainPagesList = [
   },
   {
     title: "Clinic Details",
-    path: "clinics/details/:id",
+    path: "clinics/details",
     icon: null,
     layout: "admin",
     component: ClinicDetails,
