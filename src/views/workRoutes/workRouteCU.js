@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BeatLoader } from "react-spinners";
 import ModalForm from "components/modalForm";
 import {
@@ -27,7 +27,7 @@ import NewDestinationCU from "./NewDestinationCU";
 import { useWorkRouteService } from "./services/workRouteServices";
 import { comunities } from "utils/NationalCitiesHandler";
 import { remove } from "lodash";
-
+import FroalaEditorComponent from "react-froala-wysiwyg";
 const { Option } = Select;
 const { TabPane } = Tabs;
 
@@ -36,6 +36,7 @@ export default function WorkRouteCU(props) {
   const [destinationModal, setDestinationModal] = useState(false);
   const handleDestination = () => setDestinationModal(!destinationModal);
   const countryList = csc.getAllCountries();
+  const [froalaEditorData, setFroalaEditorData] = useState("");
 
   const states = departments();
   const [cities, setCities] = useState([]);
@@ -68,12 +69,19 @@ export default function WorkRouteCU(props) {
     ) {
       setDestinations([...destinations, data]);
     }
+    handleDestination();
   };
   const removeDestination = (id) => {
     let remain = destinations.map((v) => v);
     remove(remain, (item) => item.destination_name === id);
     setDestinations(remain);
   };
+
+  useEffect(() => {
+    if (destinations.length > 0) {
+      console.log(destinations);
+    }
+  }, [destinations]);
   return (
     <ModalForm
       openModal={props.openModal}
@@ -179,24 +187,10 @@ export default function WorkRouteCU(props) {
               <Row style={{ marginTop: 5 }}>
                 <span>Description</span>
                 <Col span={24}>
-                  <Editor
-                    editorState={editorState}
-                    editorStyle={{
-                      width: "100%",
-                      height: "30vh",
-                      overflow: "hidden",
-                    }}
-                    wrapperClassName="wrapper-class"
-                    editorClassName="editor-class"
-                    toolbarClassName="toolbar-class"
-                    toolbar={{
-                      inline: { inDropdown: true },
-                      list: { inDropdown: true },
-                      textAlign: { inDropdown: true },
-                      link: { inDropdown: true },
-                      history: { inDropdown: true },
-                    }}
-                    onEditorStateChange={onchangeDescription}
+                  <FroalaEditorComponent
+                    tag="textarea"
+                    model={froalaEditorData}
+                    onModelChange={(value) => setFroalaEditorData(value)}
                   />
                 </Col>
               </Row>
@@ -294,7 +288,7 @@ export default function WorkRouteCU(props) {
                     help={errors.destinations}
                     label={
                       <span>
-                        Destination{" "}
+                        Destination References{" "}
                         <Button
                           type="ghost"
                           size="small"
@@ -316,6 +310,7 @@ export default function WorkRouteCU(props) {
                                 <Tag
                                   color="geekblue"
                                   closable
+                                  style={{ fontSize: 15, padding: "3px 7px" }}
                                   onClose={(e) => {
                                     e.preventDefault();
                                     removeDestination(item.destination_name);

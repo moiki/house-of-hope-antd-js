@@ -30,31 +30,6 @@ const schema = {
     "any.required": "Google Map Url is required",
     "string.empty": "Google Map Url is required",
   }),
-  picture: Joi.string().allow(null).label("First name").messages({
-    "string.base": "Google Map Url is required",
-    "any.required": "Google Map Url is required",
-    "string.empty": "Google Map Url is required",
-  }),
-  clinic: Joi.string().allow(null).label("First name").messages({
-    "string.base": "Google Map Url is required",
-    "any.required": "Google Map Url is required",
-    "string.empty": "Google Map Url is required",
-  }),
-  country: Joi.string().allow(null).label("First name").messages({
-    "string.base": "Google Map Url is required",
-    "any.required": "Google Map Url is required",
-    "string.empty": "Google Map Url is required",
-  }),
-  city: Joi.string().allow(null).label("First name").messages({
-    "string.base": "Google Map Url is required",
-    "any.required": "Google Map Url is required",
-    "string.empty": "Google Map Url is required",
-  }),
-  state: Joi.string().allow(null).label("First name").messages({
-    "string.base": "Google Map Url is required",
-    "any.required": "Google Map Url is required",
-    "string.empty": "Google Map Url is required",
-  }),
 };
 
 export function useWorkRouteService(props) {
@@ -195,14 +170,8 @@ export function useDestinationCrud({ create = () => {} }) {
   const states = departments();
   const [cities, setCities] = useState([]);
   const defaultValues = {
-    id: null,
     destination_name: null,
     description: null,
-    picture: null,
-    clinic: null,
-    country: null,
-    city: null,
-    state: null,
     google_map_url: null,
   };
 

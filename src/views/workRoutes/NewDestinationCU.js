@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Col, Input, Row, Form } from "antd";
 import ModalForm from "components/modalForm";
 import useForm from "utils/useForm/UseForm";
@@ -24,7 +24,11 @@ export default function NewDestinationCU({
     featuredImage,
     setFeaturedImage,
     states,
-  } = useDestinationCrud({ create: addDestination });
+  } = useDestinationCrud({ create: () => addDestination(values) });
+
+  useEffect(() => {
+    console.log(errors);
+  }, [errors]);
   return (
     <ModalForm
       openModal={openModal}
