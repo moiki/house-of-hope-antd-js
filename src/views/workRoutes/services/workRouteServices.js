@@ -38,17 +38,13 @@ export function useWorkRouteService(props) {
   const { clinics } = state;
   const [destinations, setDestinations] = useState([]);
 
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty()
-  );
+  const [editorState, setEditorState] = useState("");
   const [fetchWorkRoute, { loading: loadingFetch }] = useLazyQuery(
     getWorkRouteGQL,
     {
       onCompleted: (e) => {
         const res = e.result;
-        setEditorState(
-          EditorState.createWithContent(convertFromHTML(res.description))
-        );
+        setEditorState(res.description);
         // debugger;
         updateValues({
           id: res.id,
@@ -93,16 +89,15 @@ export function useWorkRouteService(props) {
     destinations: null,
   };
   const submitForm = async () => {
-    const descHtml = convertToHTML(editorState.getCurrentContent());
     const sbm = {
       id: idWorkRoute,
-      name: values.name,
-      description: descHtml,
-      country: values.country,
-      state: values.state,
-      city: values.city,
-      address: values.address,
-      phone_number: values.phone_number,
+      route_name: values.route_name,
+      description: values.description,
+      featured_image: values.featured_image,
+      clinic: values.clinic,
+      employees: values.employees,
+      patients: values.patients,
+      destinations: values.route_name,
     };
     // if (idWorkRoute) {
     //   executeUpdate({
@@ -144,6 +139,12 @@ export function useWorkRouteService(props) {
       });
     }
   }, [idWorkRoute]);
+
+  useEffect(() => {
+    if (values) {
+      console.log(values);
+    }
+  }, [values]);
 
   return {
     values,

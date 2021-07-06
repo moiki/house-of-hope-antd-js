@@ -12,11 +12,11 @@ import {
   Button,
   Card,
   Tag,
+  Tooltip,
 } from "antd";
 import { RiHospitalLine } from "react-icons/ri";
 import csc from "country-state-city";
 import { departments } from "utils/NationalCitiesHandler";
-import { Editor } from "react-draft-wysiwyg";
 import {
   MenuOutlined,
   PlusOutlined,
@@ -28,16 +28,30 @@ import { useWorkRouteService } from "./services/workRouteServices";
 import { comunities } from "utils/NationalCitiesHandler";
 import { remove } from "lodash";
 import FroalaEditorComponent from "react-froala-wysiwyg";
+import { useQuery } from "@apollo/react-hooks";
+import { PatientsReviewGQL } from "graphql/queries/patientsQueries";
+import gql from "graphql-tag";
 const { Option } = Select;
 const { TabPane } = Tabs;
+
+const employeesListGQL = gql`
+  query employeesList {
+    result: employeesList {
+      id
+      first_name
+      last_name
+      clinic
+    }
+  }
+`;
 
 export default function WorkRouteCU(props) {
   const [featuredImage, setFeaturedImage] = useState(null);
   const [destinationModal, setDestinationModal] = useState(false);
   const handleDestination = () => setDestinationModal(!destinationModal);
   const countryList = csc.getAllCountries();
-  const [froalaEditorData, setFroalaEditorData] = useState("");
-
+  const [patients, setPatients] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const states = departments();
   const [cities, setCities] = useState([]);
   const handleState = (e) => {
@@ -45,6 +59,30 @@ export default function WorkRouteCU(props) {
     handleChange(e, "state");
     setCities(states);
   };
+
+  //#region Fetch patients and employees
+  const {} = useQuery(PatientsReviewGQL, {
+    onCompleted: (patiensResponse) => {
+      setPatients(
+        patiensResponse.result.map((value) => ({
+          label: value.name,
+          value: value.id,
+        }))
+      );
+    },
+  });
+  const {} = useQuery(employeesListGQL, {
+    onCompleted: (employeesResponse) => {
+      setEmployees(
+        employeesResponse.result.map((value) => ({
+          label: `${value.first_name} ${value.last_name}`,
+          value: value.id,
+          clinic: value.clinic,
+        }))
+      );
+    },
+  });
+  //#endregion
   const {
     values,
     errors,
@@ -189,8 +227,8 @@ export default function WorkRouteCU(props) {
                 <Col span={24}>
                   <FroalaEditorComponent
                     tag="textarea"
-                    model={froalaEditorData}
-                    onModelChange={(value) => setFroalaEditorData(value)}
+                    model={editorState}
+                    onModelChange={(value) => onchangeDescription(value)}
                   />
                 </Col>
               </Row>
@@ -218,13 +256,13 @@ export default function WorkRouteCU(props) {
                       allowClear
                       style={{ width: "100%" }}
                       placeholder="Please select"
-                      id="city"
-                      name="city"
+                      id="employees"
+                      name="employees"
                       autoComplete={"false"}
                       onBlur={handleBlur}
-                      value={values.city}
+                      // value={values.employees}
                       onChange={(value) => {
-                        handleChange(value, "city");
+                        handleChange(value, "employees");
                       }}
                       filterOption={(input, option) =>
                         option.children
@@ -232,10 +270,10 @@ export default function WorkRouteCU(props) {
                           .indexOf(input.toLowerCase()) >= 0
                       }
                     >
-                      {cities &&
-                        cities.map((v, i) => (
+                      {employees &&
+                        employees.map((v, i) => (
                           <Option key={i} value={v.value}>
-                            {v.value}
+                            {v.label}
                           </Option>
                         ))}
                     </Select>
@@ -261,7 +299,7 @@ export default function WorkRouteCU(props) {
                       onBlur={handleBlur}
                       // value={values.patients}
                       onChange={(value) => {
-                        // handlepatients(value);
+                        handleChange(value, "patients");
                       }}
                       filterOption={(input, option) =>
                         option.children
@@ -269,10 +307,10 @@ export default function WorkRouteCU(props) {
                           .indexOf(input.toLowerCase()) >= 0
                       }
                     >
-                      {states &&
-                        states.map((v, i) => (
+                      {patients &&
+                        patients.map((v, i) => (
                           <Option key={i} value={v.value}>
-                            {v.value}
+                            {v.label}
                           </Option>
                         ))}
                     </Select>
@@ -304,9 +342,17 @@ export default function WorkRouteCU(props) {
                   >
                     <Card color="success">
                       {destinations?.length > 0
-                        ? destinations.map((item) => {
+                        ? destinations.map((item, index) => {
                             return (
-                              <span>
+                              <Tooltip
+                                color="#fff"
+                                key={index}
+                                title={
+                                  <span style={{ color: "GrayText" }}>
+                                    {item.description}
+                                  </span>
+                                }
+                              >
                                 <Tag
                                   color="geekblue"
                                   closable
@@ -318,7 +364,7 @@ export default function WorkRouteCU(props) {
                                 >
                                   {item.destination_name}
                                 </Tag>
-                              </span>
+                              </Tooltip>
                             );
                           })
                         : null}
