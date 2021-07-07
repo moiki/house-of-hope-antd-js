@@ -84,9 +84,9 @@ export function useWorkRouteService(props) {
     description: null,
     featured_image: null,
     clinic: null,
-    employees: null,
-    patients: null,
-    destinations: null,
+    employees: [],
+    patients: [],
+    // destinations: null,
   };
   const submitForm = async () => {
     const sbm = {
@@ -97,8 +97,9 @@ export function useWorkRouteService(props) {
       clinic: values.clinic,
       employees: values.employees,
       patients: values.patients,
-      destinations: values.route_name,
+      destinations: destinations,
     };
+    console.log(sbm);
     // if (idWorkRoute) {
     //   executeUpdate({
     //     variables: {
@@ -114,10 +115,6 @@ export function useWorkRouteService(props) {
     // }
   };
 
-  const onchangeDescription = (value) => {
-    setEditorState(value);
-  };
-
   const {
     values,
     errors,
@@ -128,6 +125,10 @@ export function useWorkRouteService(props) {
     // updateSchema,<RiHospitalLine className="anticon" />
   } = useForm(submitForm, defaultValues, workRouteSchema);
 
+  const onchangeDescription = (value) => {
+    setEditorState(value);
+    handleChange(value, "description");
+  };
   const handleClinic = (e) => {
     handleChange(e, "clinic");
   };
@@ -139,12 +140,6 @@ export function useWorkRouteService(props) {
       });
     }
   }, [idWorkRoute]);
-
-  useEffect(() => {
-    if (values) {
-      console.log(values);
-    }
-  }, [values]);
 
   return {
     values,

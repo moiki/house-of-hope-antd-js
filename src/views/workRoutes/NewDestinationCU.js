@@ -26,9 +26,6 @@ export default function NewDestinationCU({
     states,
   } = useDestinationCrud({ create: () => addDestination(values) });
 
-  useEffect(() => {
-    console.log(errors);
-  }, [errors]);
   return (
     <ModalForm
       openModal={openModal}

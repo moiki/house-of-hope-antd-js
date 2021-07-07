@@ -1,6 +1,8 @@
 import Joi from "@hapi/joi";
 
 export default {
+  id: Joi.string().optional().allow(null),
+  featured_image: Joi.string().optional().allow(null),
   route_name: Joi.string().required().label("First name").messages({
     "string.base": "First name is required",
     "any.required": "First name is required",
@@ -17,18 +19,17 @@ export default {
     "any.required": "clinic is Required",
   }),
 
-  employees: Joi.string().required().messages({
+  employees: Joi.array().required().messages({
     "any.required": "employees is required",
     "string.empty": "employees is required",
   }),
-  patients: Joi.string().required().messages({
-    "string.base": "patients Is Required",
+  patients: Joi.array().required().messages({
     "any.required": "patients Is Required",
     "string.empty": "patients Is Required",
   }),
-  destinations: Joi.string().required().messages({
-    "string.base": "destinations Is Required",
-    "any.required": "destinations Is Required",
-    "string.empty": "destinations Is Required",
-  }),
+  // destinations: Joi.string().required().messages({
+  //   "string.base": "destinations Is Required",
+  //   "any.required": "destinations Is Required",
+  //   "string.empty": "destinations Is Required",
+  // }),
 };
