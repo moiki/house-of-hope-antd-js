@@ -75,7 +75,12 @@ export default function Admin(props) {
               v.allowedRoles.some((route) => state.user.role.includes(route))
             ) {
               return v.children ? (
-                <SubMenu icon={v.icon} key={i} title={v.title}>
+                <SubMenu
+                  icon={v.icon}
+                  style={{ fontWeight: "bold" }}
+                  key={i}
+                  title={v.title}
+                >
                   {v.children.map((f, g) => {
                     if (
                       f.layout === "admin" &&
@@ -85,7 +90,12 @@ export default function Admin(props) {
                     ) {
                       return (
                         <Menu.Item key={`_${g}_${v.title}`}>
-                          <NavLink to={`/admin/${f.path}`}>{f.title}</NavLink>
+                          <NavLink
+                            style={{ fontWeight: "bold" }}
+                            to={`/admin/${f.path}`}
+                          >
+                            {f.title}
+                          </NavLink>
                         </Menu.Item>
                       );
                     }
@@ -93,7 +103,12 @@ export default function Admin(props) {
                 </SubMenu>
               ) : (
                 <Menu.Item key={i} icon={v.icon}>
-                  <NavLink to={`/admin/${v.path}`}>{v.title}</NavLink>
+                  <NavLink
+                    style={{ fontWeight: "bold" }}
+                    to={`/admin/${v.path}`}
+                  >
+                    {v.title}
+                  </NavLink>
                 </Menu.Item>
               );
             }

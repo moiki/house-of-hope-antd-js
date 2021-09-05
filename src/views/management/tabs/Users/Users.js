@@ -72,33 +72,37 @@ export default function Users(props) {
       title: "Action",
       dataIndex: "id",
       key: "id",
-      render: (text) => (
-        <Space size="middle">
-          <Button
-            className="ant-btn-info"
-            shape="round"
-            onClick={() => handleUpdate(text)}
-            icon={<EditOutlined />}
-          >
-            Edit
-          </Button>
-          <Popconfirm
-            placement="top"
-            title={"Are you sure to delete this Account?"}
-            onConfirm={() => handleDelete(text)}
-            okText="Yes"
-            cancelText="No"
-          >
+      render: (text, row) => {
+        return (
+          <Space size="middle">
             <Button
-              icon={<DeleteOutlined />}
+              className="ant-btn-info"
               shape="round"
-              className="ant-btn-danger"
+              onClick={() => handleUpdate(text)}
+              icon={<EditOutlined />}
             >
-              Delete
+              Edit
             </Button>
-          </Popconfirm>
-        </Space>
-      ),
+            {row?.roles?.some((val) => val.role_name !== "Root") ? (
+              <Popconfirm
+                placement="top"
+                title={"Are you sure to delete this Account?"}
+                onConfirm={() => handleDelete(text)}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button
+                  icon={<DeleteOutlined />}
+                  shape="round"
+                  className="ant-btn-danger"
+                >
+                  Delete
+                </Button>
+              </Popconfirm>
+            ) : null}
+          </Space>
+        );
+      },
     },
   ];
   const [refetchUser, { loading: loadingUser }] = useLazyQuery(userListGQL, {

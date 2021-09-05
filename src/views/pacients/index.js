@@ -5,6 +5,8 @@ import gql from "graphql-tag";
 import { useQuery } from "@apollo/react-hooks";
 import LoadingWrapper from "components/loaders/LoadingWrapper";
 import { NavLink, useHistory } from "react-router-dom";
+import imgPatient from "../../assets/img/injured.svg";
+import { ScaleLoader } from "react-spinners";
 
 const getPatientGQL = gql`
   {
@@ -45,70 +47,70 @@ export default function PacientsView() {
 
   return (
     <div className="clinic-card-container">
-      <LoadingWrapper loading={loading}>
-        <List
-          itemLayout="vertical"
-          size="large"
-          pagination={{
-            onChange: (page) => {
-              console.log(page);
-            },
-            pageSize: 3,
-          }}
-          dataSource={patients}
-          renderItem={(item) => (
-            <List
-              key={item.title}
-              actions={[
-                <IconText
-                  icon={StarOutlined}
-                  text="156"
-                  key="list-vertical-star-o"
-                />,
-                <IconText
-                  icon={LikeOutlined}
-                  text="156"
-                  key="list-vertical-like-o"
-                />,
-                <IconText
-                  icon={MessageOutlined}
-                  text="2"
-                  key="list-vertical-message"
-                />,
-              ]}
-              extra={
-                <img
-                  width={272}
-                  alt="logo"
-                  src="https://png.pngtree.com/png-vector/20190802/ourlarge/pngtree-patient-user-injured-hospital-flat-color-icon-vector-icon-png-image_1645907.jpg"
+      {loading ? (
+        <div style={{ marginTop: "30%", marginLeft: "30%" }}>
+          <ScaleLoader loading color="#084954" />
+        </div>
+      ) : (
+        <div style={{ padding: "1.6rem" }}>
+          <List
+            itemLayout="vertical"
+            size="large"
+            pagination={{
+              onChange: (page) => {
+                console.log(page);
+              },
+              pageSize: 3,
+            }}
+            dataSource={patients}
+            renderItem={(item) => (
+              <List
+                key={item.title}
+                actions={[
+                  <IconText
+                    icon={StarOutlined}
+                    text="156"
+                    key="list-vertical-star-o"
+                  />,
+                  <IconText
+                    icon={LikeOutlined}
+                    text="156"
+                    key="list-vertical-like-o"
+                  />,
+                  <IconText
+                    icon={MessageOutlined}
+                    text="2"
+                    key="list-vertical-message"
+                  />,
+                ]}
+                extra={<img width={272} alt="logo" src={imgPatient} />}
+              >
+                <List.Item.Meta
+                  avatar={<Avatar src={item.avatar} />}
+                  title={
+                    <Button
+                      type="primary"
+                      shape="round"
+                      onClick={() =>
+                        hist.push({
+                          pathname: "/admin/patients/details",
+                          state: {
+                            id: item.id,
+                          },
+                        })
+                      }
+                    >
+                      {item.title}
+                    </Button>
+                  }
+                  description={item.description}
                 />
-              }
-            >
-              <List.Item.Meta
-                avatar={<Avatar src={item.avatar} />}
-                title={
-                  <Button
-                    type="primary"
-                    shape="round"
-                    onClick={() =>
-                      hist.push({
-                        pathname: "/admin/patients/details",
-                        state: {
-                          id: item.id,
-                        },
-                      })
-                    }
-                  >
-                    {item.title}
-                  </Button>
-                }
-                description={item.description}
-              />
-              {item.content}
-            </List>
-          )}
-        />
-      </LoadingWrapper>
+                {item.content}
+              </List>
+            )}
+          />
+        </div>
+      )}
     </div>
   );
 }

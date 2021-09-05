@@ -198,7 +198,7 @@ export default function PatientCU(props) {
                   >
                     <DatePicker
                       style={{ width: "100%" }}
-                      value={moment(values.birth_date)}
+                      value={moment(values.birth_date || new Date())}
                       onChange={(v) =>
                         handleChange(v.format("MM-DD-YYYY"), "birth_date")
                       }

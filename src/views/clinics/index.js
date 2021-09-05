@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import ClinicCard from "components/clinicCard";
+import imgClinic from "../../assets/img/building.svg";
 import { List, Avatar, Space, Button } from "antd";
 import { MessageOutlined, LikeOutlined, StarOutlined } from "@ant-design/icons";
 import "assets/css/clinic.css";
@@ -42,7 +42,7 @@ export default function ClinicsView() {
             href: "https://ant.design",
             title: value.name,
             avatar:
-              "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
+              "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfHnVXCYX.png",
             description: "Clinic of Bradley's House of Hope",
             content:
               "We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.",
@@ -77,7 +77,7 @@ export default function ClinicsView() {
           <ScaleLoader loading color="#084954" />
         </div>
       ) : (
-        <>
+        <div style={{ padding: "1.6rem" }}>
           <List
             itemLayout="vertical"
             size="large"
@@ -88,11 +88,6 @@ export default function ClinicsView() {
               pageSize: 3,
             }}
             dataSource={clinicsState}
-            footer={
-              <div>
-                <b>ant design</b> footer part
-              </div>
-            }
             renderItem={(item) => (
               <List.Item
                 key={item.title}
@@ -113,13 +108,7 @@ export default function ClinicsView() {
                     key="list-vertical-message"
                   />,
                 ]}
-                extra={
-                  <img
-                    width={272}
-                    alt="logo"
-                    src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-                  />
-                }
+                extra={<img width={272} alt="logo" src={imgClinic} />}
               >
                 <List.Item.Meta
                   avatar={
@@ -151,7 +140,7 @@ export default function ClinicsView() {
               </List.Item>
             )}
           />
-        </>
+        </div>
       )}
     </div>
   );
